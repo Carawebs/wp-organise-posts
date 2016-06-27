@@ -1,5 +1,5 @@
 {
-    "name": "vendor-name/plugin-name",
+    "name": "vendor-name/organise-posts",
     "description": "This is a short description of what the plugin does.",
     "type": "wordpress-plugin",
     "keywords": ["wordpress", "plugin"],
@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Vendor_Name\\Plugin_Name\\": "lib/"
+            "Carawebs\\OrganisePosts\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Vendor_Name\\Tests\\Plugin_Name\\": "tests/"
+            "Carawebs\\Tests\\OrganisePosts\\": "tests/"
         }
     },
     "require": {

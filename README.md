@@ -27,7 +27,7 @@ The Boilerplate can be installed in one of two ways both of which are documented
 #### On Linux or OS X
 
 1. Copy the `WordPress-Plugin-Boilerplate` directory into your `wp-content/plugins` directory.
-2. Create a symbolic link between the `trunk` directory and the plugin. For example: `ln -s plugin-name/trunk /path/to/wordpress/wp-content/plugins/plugin-name`
+2. Create a symbolic link between the `trunk` directory and the plugin. For example: `ln -s organise-posts/trunk /path/to/wordpress/wp-content/plugins/organise-posts`
 3. In the WordPress dashboard, navigation to the *Plugins* page
 Locate the menu item that reads “The WordPress Plugin Boilerplate.”
 4. Click on *Activate.*
@@ -35,7 +35,7 @@ Locate the menu item that reads “The WordPress Plugin Boilerplate.”
 #### On Windows
 
 1. Copy the `WordPress-Plugin-Boilerplate` directory into your `wp-content/plugins` directory.
-2. Create a symbolic link between the `trunk` directory and the plugin. For example: `mklink /J path\to\wp-content\plugins \path\to\WordPress-Plugin-Boilerplate\trunk\plugin-name`
+2. Create a symbolic link between the `trunk` directory and the plugin. For example: `mklink /J path\to\wp-content\plugins \path\to\WordPress-Plugin-Boilerplate\trunk\organise-posts`
 3. In the WordPress dashboard, navigation to the *Plugins* page
 Locate the menu item that reads “The WordPress Plugin Boilerplate.”
 4. Click on *Activate.*
