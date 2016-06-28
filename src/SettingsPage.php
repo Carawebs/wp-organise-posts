@@ -85,7 +85,7 @@ class SettingsPage {
     add_submenu_page(
       'tools.php',
       esc_html_x('Cookie Policy Settings', 'setting title', 'gm-cookie-policy'),
-      esc_html__('Cookie Policy', 'gm-cookie-policy'),
+      esc_html__('Organise Posts', 'organise-posts'),
       $this->config['capability'],
       self::SLUG,
       function () {

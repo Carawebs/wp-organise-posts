@@ -62,25 +62,70 @@ function autoload() {
 
 }
 
-// autoload();
-//
-// \register_activation_hook( __FILE__, '\Carawebs\OrganisePosts\Activator::activate' );
-// \register_deactivation_hook( __FILE__, '\Carawebs\OrganisePosts\Deactivator::deactivate' );
+function settings() {
 
+  $customWPMenu = new \Carawebs\OrganisePosts\Settings\Menu( array(
+			'slug' => 'test_wpmenu',
+			'title' => 'Organise Posts',
+			'desc' => 'Settings for theme custom WordPress Menu',
+			'icon' => 'dashicons-welcome-widgets-menus',
+			'position' => 99,
+      //'function'  => 'add_submenu_page'
+		));
+  $customWPMenu->add_field(array(
+  	'name' => 'text',
+  	'title' => 'Text Input',
+  	'desc' => 'Input Description' ));
+
+  $customWPMenu->add_field(array(
+  	'name' => 'checkbox',
+  	'title' => 'Checkbox Example',
+  	'desc' => 'Check it to wake it',
+  	'type' => 'checkbox'));
+
+  $customWPMenu->add_field(array(
+  	'name' => 'radio',
+  	'title' => 'Radio Example',
+  	'desc' => 'Make a selection',
+  	'type' => 'radio',
+    'options' => [
+      'one' => 'Radio One',
+      'two' => 'Radio Two'
+      ]
+  ));
+
+  // $subMenu = new \Carawebs\OrganisePosts\Settings\SubMenu( array(
+	// 		'slug' => 'sub_wpmenu',
+	// 		'title' => 'Submenu',
+	// 		'desc' => 'Settings for theme custom WordPress Menu',
+	// 		'icon' => 'dashicons-welcome-widgets-menus',
+	// 		'position' => 99,
+	// 	), $customWPMenu);
+  // $subMenu->add_field(array(
+  // 	'name' => 'text',
+  // 	'title' => 'Text Input',
+  // 	'desc' => 'Input Description' ));
+
+
+}
+
+// function hooks() {
+//
+//   $settings = new \Carawebs\OrganisePosts\Hooks\Settings();
+//   new \Carawebs\OrganisePosts\Hooks\AddAction( 'wp_head', $settings );
+//
+// }
 /**
  * Begins execution of the plugin.
  *
  * @since    1.0.0
  */
-// \add_action( 'plugins_loaded', function () {
-//     $plugin = new \Carawebs\OrganisePosts\Plugin();
-//     $plugin->run();
-// } );
-//
 // Nothing more to do on AJAX requests
 ( defined('DOING_AJAX') && DOING_AJAX) or add_action( 'wp_loaded', function () {
 
     autoload();
+
+    settings();
 
     // Controller class is responsible to instantiate objects and attach their methods to proper hooks.
     $controller = new Controller();
