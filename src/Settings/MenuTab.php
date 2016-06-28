@@ -18,7 +18,7 @@ class MenuTab {
 
   public $menu;
 
-  public function __construct( $options, WordPressMenu $menu ) {
+  public function __construct( $options, MenuPage $menu ) {
 
     $this->slug = $options['slug'];
     $this->title = $options['title'];

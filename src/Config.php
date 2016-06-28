@@ -22,8 +22,7 @@ class Config implements \ArrayAccess {
      * @param array                   $newData
      * @return \Carawebs\OrganisePosts\Config
      */
-    public static function newInstanceFrom(Config $config = null, array $newData = [])
-    {
+    public static function newInstanceFrom( Config $config = null, array $newData = [] ) {
         $live = $config ? $config->live->getArrayCopy() : [];
         $stored = $config ? array_merge($config->stored->getArrayCopy(), $newData) : $newData;
         $instance =  new static($live, []);
@@ -36,12 +35,13 @@ class Config implements \ArrayAccess {
      * @param array $liveConfig
      * @param array $defaults
      */
-    public function __construct(array $liveConfig = [], array $defaults = [])
-    {
-        $stored = get_option(self::OPTION) ?: [];
-        $this->stored = new \ArrayObject(array_merge($defaults, $stored));
-        $liveConfig['capability'] = apply_filters('cookie-policy.config-capability', self::CAP);
-        $this->live = new \ArrayObject($liveConfig);
+    public function __construct(array $liveConfig = [], array $defaults = [] ) {
+
+      $stored = get_option(self::OPTION) ?: [];
+      $this->stored = new \ArrayObject(array_merge($defaults, $stored));
+      $liveConfig['capability'] = apply_filters('cookie-policy.config-capability', self::CAP);
+      $this->live = new \ArrayObject($liveConfig);
+
     }
 
     /**
