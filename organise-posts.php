@@ -81,7 +81,8 @@ function settings() {
       'name'  => 'address_line_1',
       'title' => 'Address Line One',
       'desc'  => 'The first line'
-    ]);
+    ]
+  );
 
   $menu_page->add_field(
     [
@@ -89,7 +90,8 @@ function settings() {
       'title' => 'Checkbox Example',
       'desc'  => 'Check it to wake it',
       'type'  => 'checkbox'
-    ]);
+    ]
+  );
 
   $menu_page->add_field(
     [
@@ -101,7 +103,8 @@ function settings() {
         '1' => 'Radio One',
         '2' => 'Radio Two'
         ]
-    ]);
+    ]
+  );
 
   $menu_page->add_field(
     [
@@ -114,7 +117,8 @@ function settings() {
         'two' => 'Radio Two',
         'three' => 'Radio Three'
         ]
-    ]);
+    ]
+  );
 
   $menu_page->add_field(
     [
@@ -122,7 +126,8 @@ function settings() {
       'type' => 'wpeditor',
       'title' => 'WYSIWYG Input',
       'desc' => 'Input Description'
-    ]);
+    ]
+  );
 
   // Creating tab with our custom wordpress menu
   $customTab = new \Carawebs\OrganisePosts\Settings\MenuTab(
@@ -160,6 +165,15 @@ function settings() {
       'title' => 'Twitter',
       'type' => 'text',
     ]);
+
+  $SMTab->add_field(
+    [
+      'name' => 'sm_wpeditor',
+      'type' => 'wpeditor',
+      'title' => 'WYSIWYG Input',
+      'desc' => 'Enter some stuff'
+    ]
+  );
 
 }
 

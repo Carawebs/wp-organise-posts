@@ -5,46 +5,43 @@ abstract class PluginSettings {
 
   use Validator;
   use RenderFields;
+
   /**
-   * ID of the settings
-   * @var string
-   */
+  * ID of the settings
+  * @var string
+  */
   public $settings_id = '';
 
   /**
-   * Tabs for the settings page
-   * @var array
-   */
+  * Tabs for the settings page
+  * @var array
+  */
   public $tabs = [ 'general' => 'General' ];
 
   /**
-   * Settings from database
-   * @var array
-   */
-  protected $settings = array();
+  * Settings from database
+  * @var array
+  */
+  protected $settings = [];
 
   /**
-   * Array of fields for each tab
-   * [
-   *   'tab_slug' => [
-   *     'field_name' => [],
-   *   ],
-   * ]
-   * This array is populated as the `add_field()` method is called.
-   * @var array
-   */
+  * Array of fields for each tab in this format:
+  * `[ 'tab_slug' => [ 'field_name' => ['option_key'=>'option_value',] ] ]`
+  * This array is populated as the `add_field()` method is called.
+  * @var array
+  */
   protected $fields = [];
 
   /**
-   * Data from POST request
-   * @var array
-   */
+  * Data from POST request
+  * @var array
+  */
   protected $posted_data = [];
 
   /**
-   * Get the settings from the database
-   * @return void
-   */
+  * Get the settings from the database
+  * @return void
+  */
   public function init_settings() {
 
     $this->settings = (array) get_option( $this->settings_id );
@@ -67,40 +64,52 @@ abstract class PluginSettings {
 
   }
   /**
-   * Save settings from POST
-   * @return [type] [description]
-   */
-  public function save_settings(){
+  * Save settings from POST
+  * @return [type] [description]
+  */
+  public function save_settings() {
 
-     $this->posted_data = $_POST;
+    $_SESSION['saved'] = ['saved' => TRUE, 'key' => $this->nonce_key, 'action' =>$this->nonce_action];
+    $_SESSION['saved']['nonce_fail'] = FALSE;
 
-     if( empty( $this->settings ) ) {
 
-       $this->init_settings();
+    if ( ! wp_verify_nonce( $_POST[$this->nonce_key], $this->nonce_action ) ) {
 
-     }
+      $_SESSION['saved']['nonce_fail'] = TRUE;
 
-     foreach ($this->fields as $tab => $tab_data ) {
+      return new \WP_Error(__CLASS__, 'Invalid data.');
 
-       foreach ($tab_data as $name => $field) {
+    }
 
-         $this->settings[ $name ] = $this->{ 'validate_' . $field['type'] }( $name );
+    $this->posted_data = $_POST;
 
-       }
+    if( empty( $this->settings ) ) {
 
-     }
+      $this->init_settings();
 
-     update_option( $this->settings_id, $this->settings );
+    }
+
+    foreach ($this->fields as $tab => $tab_data ) {
+
+      foreach ($tab_data as $name => $field) {
+
+        $this->settings[ $name ] = $this->{ 'validate_' . $field['type'] }( $name );
+
+      }
+
+    }
+
+    update_option( $this->settings_id, $this->settings );
 
   }
 
   /**
-   * Gets an option from the settings API, using defaults if necessary to prevent undefined notices.
-   *
-   * @param  string $key
-   * @param  mixed  $empty_value
-   * @return mixed  The value specified for the option or a default value for the option.
-   */
+  * Gets an option from the settings API, using defaults if necessary to prevent undefined notices.
+  *
+  * @param  string $key
+  * @param  mixed  $empty_value
+  * @return mixed  The value specified for the option or a default value for the option.
+  */
   public function get_option( $key, $empty_value = NULL ) {
 
     if ( empty( $this->settings ) ) {
@@ -137,14 +146,14 @@ abstract class PluginSettings {
   }
 
   /**
-   * Add fields
-   *
-   * This method is called by the client code
-   *
-   * @param array $array options for the field to add
-   * @param string $tab tab for which the field is
-   */
-  public function add_field( $field_arguments, $tab = 'general' ) {
+  * Add fields
+  *
+  * This method is called by the client code
+  *
+  * @param array $array options for the field to add
+  * @param string $tab tab slug for this field, defaults to 'general'
+  */
+  public function add_field( $override_arguments, $tab = 'general' ) {
 
     $allowed_field_types = [
       'text',
@@ -155,25 +164,27 @@ abstract class PluginSettings {
       'checkbox'
     ];
 
-    // If a type is set that is now allowed, don't add the field
-    if( isset( $field_arguments['type'] ) && $field_arguments['type'] != '' && ! in_array( $field_arguments['type'], $allowed_field_types ) ) {
+    // If a type is set that is not allowed, don't add the field
+    if( isset( $override_arguments['type'] ) && $override_arguments['type'] != '' && ! in_array( $override_arguments['type'], $allowed_field_types ) ) {
 
       return;
 
     }
 
-    $defaults = [
-      'name' => '',
-      'title' => '',
-      'default' => '',
+    $default_arguments = [
+      'name'        => '',
+      'title'       => '',
+      'default'     => '',
       'placeholder' => '',
-      'type' => 'text',
-      'options' => array(),
-      'default' => '',
-      'desc' => '',
-      ];
+      'type'        => 'text',
+      'options'     => [],
+      'default'     => '',
+      'desc'        => '',
+    ];
 
-    $field_arguments = array_merge( $defaults, $field_arguments );
+
+    // Merge overrides into defaults
+    $field_arguments = array_merge( $default_arguments, $override_arguments );
 
     if( $field_arguments['name'] == '' ) {
 
@@ -181,6 +192,7 @@ abstract class PluginSettings {
 
     }
 
+    // Disallow duplicate field names
     foreach ( $this->fields as $tabs ) {
 
       if( isset( $tabs[ $field_arguments['name'] ] ) ) {
@@ -192,7 +204,7 @@ abstract class PluginSettings {
 
     }
 
-    // If there are options set, then use the first option as a default value
+    // If there are options set but no default, then use the first option as a default value
     if( ! empty( $field_arguments['options'] ) && $field_arguments['default'] == '' ) {
 
       $field_arguments_keys = array_keys( $field_arguments['options'] );
@@ -200,12 +212,14 @@ abstract class PluginSettings {
 
     }
 
+    // If there is no fields array for this tab, initialize one
     if( ! isset( $this->fields[ $tab ] ) ) {
 
       $this->fields[ $tab ] = [];
 
     }
 
+    // The field arguments array, under the specified tab
     $this->fields[ $tab ][ $field_arguments['name'] ] = $field_arguments;
 
     // DEBUG @REMOVE
@@ -216,10 +230,10 @@ abstract class PluginSettings {
   }
 
   /**
-   * Adding tab
-   * @param array $array options
-   */
-  public function add_tab( $array ) {
+  * Add tab
+  * @param array $array options array with tab slug and title
+  */
+  public function add_tab( array $array ) {
 
     $defaults = [
       'slug'  => '',

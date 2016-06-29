@@ -4,7 +4,9 @@
 namespace Carawebs\OrganisePosts\Settings;
 
 /**
- * Factory class used to register fields and tabs
+ * Factory class used to register fields under a unique tab on a menu page
+ *
+ * @see http://www.ibenic.com/creating-wordpress-menu-pages-oop/
  *
  * @author  David Egan <david@carawebs.com>
  * @license http://opensource.org/licenses/MIT MIT
@@ -29,7 +31,7 @@ class MenuTab {
 
   /**
   * Add field to this tab
-  * @param [type] $array [description]
+  * @param array $array Field arguments
   */
   public function add_field( $array ) {
 

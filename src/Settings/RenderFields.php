@@ -14,12 +14,31 @@ trait RenderFields {
       echo '<p>' . __( 'There are no settings on these page.', 'textdomain' ) . '</p>';
       return;
     }
+
+    $this->nonce();
+
     foreach ( $this->fields[ $tab ] as $name => $field ) {
 
       $this->{ 'render_' . $field['type'] }( $field );
 
     }
 
+  }
+
+  public function nonce() {
+
+    ob_start();
+    ?>
+    <input
+      type="hidden"
+      name="action"
+      value="<?= esc_attr( $this->action ) ?>">
+    <input
+      type="hidden"
+      name="<?= esc_attr( $this->nonce_key ) ?>"
+      value="<?= esc_attr( wp_create_nonce( $this->nonce_action ) ) ?>">
+    <?php
+    echo ob_get_clean();
   }
 
   /**
@@ -152,7 +171,7 @@ trait RenderFields {
 
     <?php
   }
-  
+
   /**
   * Render checkbox field
   * @param  string $field options

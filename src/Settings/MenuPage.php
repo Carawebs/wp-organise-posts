@@ -3,6 +3,13 @@
 namespace Carawebs\OrganisePosts\Settings;
 
 class MenuPage extends PluginSettings {
+
+  protected $action       = 'carawebs-organise-posts-save';
+  protected $nonce_action = 'carawebs-organise-posts-nonce';
+  protected $nonce_key    = '_carawebs-organise-posts';
+  // const ERR_KEY      = 'err';
+  // const EDITOR_ID    = 'carawebs-organise-posts';
+
   /**
    * Default options
    * @var array
@@ -20,8 +27,6 @@ class MenuPage extends PluginSettings {
     'function'    => ''
   ];
 
-  private $functionToUse;
-
   /**
    * Gets populated on submenus, contains slug of parent menu
    * @var null
@@ -36,18 +41,22 @@ class MenuPage extends PluginSettings {
 
   function __construct( $options, $submenu_page = NULL ) {
 
+    // A slug must be set
+    if( NULL === $options['slug'] ) { return; }
+
+    // Override the default options
     $this->menu_options = array_merge( $this->defaultOptions, $options );
+
+    // If a submenu page has been specified, set `$this->parent_id`
     $this->parent_id = $submenu_page;
-    if( '' == $this->menu_options['slug'] ) {
 
-      return;
-
-    }
-
+    // Set the unique ID for these settings
     $this->settings_id = $this->menu_options['slug'];
+
+    // Build some rational defaults based on incomplete/limited inputs
     $this->prepopulate();
 
-    // @TODO Move hooks into a loader class
+    // @TODO Move hooks into a loader class?
     add_action( 'admin_menu', array( $this, 'add_page' ) );
     add_action( 'wordpressmenu_page_save_' . $this->settings_id, array( $this, 'save_settings' ) );
 
@@ -57,21 +66,20 @@ class MenuPage extends PluginSettings {
    * Populate some of required options
    *
    * If no 'title' is provided, use the slug to construct one. If no 'page_title' is provided,
-   * use the 'title' to construct one.
+   * use the 'title' to construct one. If no 'function' provided, set default.
    *
    * @return void
    */
   public function prepopulate() {
 
-    if( $this->menu_options['title'] == '' ) {
-      $this->menu_options['title'] = ucfirst( $this->menu_options['slug'] );
-    }
+    $this->menu_options['title'] = $this->menu_options['title']
+      ?: ucfirst( $this->menu_options['slug'] );
 
-    if( $this->menu_options['page_title'] == '' ) {
-      $this->menu_options['page_title'] = $this->menu_options['title'];
-    }
+    $this->menu_options['page_title'] = $this->menu_options['page_title']
+      ?: $this->menu_options['page_title'] = $this->menu_options['title'];
 
-    $this->menu_options['function'] = $this->menu_options['function'] ? : 'create_menu_page';
+    $this->menu_options['function'] = $this->menu_options['function']
+      ?: 'create_menu_page';
 
   }
 
@@ -120,8 +128,11 @@ class MenuPage extends PluginSettings {
 
     $this->save_if_submit();
 
+    // The default tab is 'general'
+    // @TODO: set the default tab as a property for better "Single Responsibility"
     $tab = 'general';
 
+    // If on a tabbed page, set the tab accordingly
     if( isset( $_GET['tab'] ) ) {
 
       $tab = $_GET['tab'];
@@ -135,7 +146,12 @@ class MenuPage extends PluginSettings {
       <h2><?php echo $this->menu_options['page_title'] ?></h2>
       <?php
 
-      //var_dump($_SESSION['fields']);
+      // -----------------------------------------------------------------------
+      // DEBUG - dump fields
+      // var_dump($_SESSION['fields']);
+      // var_dump( $_SESSION['saved']);
+      // var_dump( $_POST );
+      // -----------------------------------------------------------------------
         if ( ! empty( $this->menu_options['desc'] ) ) {
           ?><p class='description'><?php echo $this->menu_options['desc'] ?></p><?php
         }
@@ -177,7 +193,7 @@ class MenuPage extends PluginSettings {
     }
 
   }
-  
+
   /**
    * Render the save button
    * @return void
@@ -186,7 +202,7 @@ class MenuPage extends PluginSettings {
 
     ?>
     <button type="submit" name="<?= $this->settings_id; ?>_save" class="button button-primary">
-      <?php _e( 'Save', 'textdomain' ); ?>
+      <?php _e( 'Save', 'organise-posts' ); ?>
     </button>
     <?php
 
@@ -200,7 +216,15 @@ class MenuPage extends PluginSettings {
 
     if( isset( $_POST[ $this->settings_id . '_save' ] ) ) {
 
-      do_action( 'wordpressmenu_page_save_' . $this->settings_id );
+      $return = $this->save_settings();
+
+      if( is_wp_error( $return ) ) {
+
+          echo $return->get_error_message();
+          
+      }
+
+      //do_action( 'wordpressmenu_page_save_' . $this->settings_id );
 
     }
 
