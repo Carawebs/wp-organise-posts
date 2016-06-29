@@ -25,10 +25,20 @@
  * Domain Path:       /languages
  */
 namespace Carawebs\OrganisePosts;
+
+use Carawebs\OrganisePosts\Settings;
+
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
   die;
 }
+
+/**
+ * Define constants for this plugin
+ */
+define( 'CW_ORGANISE_POSTS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+
+
 
 /**
  * Load Composer autoload if available, otherwise register a simple autoload callback.
@@ -193,7 +203,9 @@ function settings() {
 
     autoload();
 
-    settings();
+    $controller = new Settings\Controller( new Settings\Config('organise-posts') );
+
+    //settings();
 
     // Controller class is responsible to instantiate objects and attach their methods to proper hooks.
     $controller = new Controller();

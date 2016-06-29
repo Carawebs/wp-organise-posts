@@ -1,7 +1,7 @@
 <?php
 namespace Carawebs\OrganisePosts\Settings;
 
-class Validator extends Controller {
+trait Validator {
 
 
   /**
@@ -93,7 +93,7 @@ class Validator extends Controller {
    * @return string
    */
   public function validate_checkbox( $key ) {
-
+    
     $status = '';
     if ( isset( $this->posted_data[ $key ] ) && ( 1 == $this->posted_data[ $key ] ) ) {
       $status = '1';

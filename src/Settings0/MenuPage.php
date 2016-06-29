@@ -180,7 +180,7 @@ class MenuPage extends PluginSettings {
 
     if( count( $this->tabs ) > 1 ) {
 
-      echo '<h2 class="nav-tab-wrapper woo-nav-tab-wrapper">';
+      echo '<h2 class="nav-tab-wrapper">';
 
         foreach ($this->tabs as $key => $value) {
 
@@ -221,7 +221,7 @@ class MenuPage extends PluginSettings {
       if( is_wp_error( $return ) ) {
 
           echo $return->get_error_message();
-          
+
       }
 
       //do_action( 'wordpressmenu_page_save_' . $this->settings_id );

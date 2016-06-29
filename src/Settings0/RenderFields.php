@@ -1,7 +1,7 @@
 <?php
 namespace Carawebs\OrganisePosts\Settings;
 
-class RenderFields extends Controller {
+trait RenderFields {
 
   /**
   * Rendering fields
