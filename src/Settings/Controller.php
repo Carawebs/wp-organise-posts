@@ -162,10 +162,10 @@ class Controller extends RenderPage {
   }
 
   /**
-   * Save if the button for this menu is submitted
+   * Trigger the saveSettings method if the button for this menu is submitted
    * @return void
    */
-  protected function save_if_submit() {
+  protected function saveIfSubmitted() {
 
     if( isset( $_POST[ $this->settings_id . '_save' ] ) ) {
 
@@ -182,8 +182,13 @@ class Controller extends RenderPage {
   }
 
   /**
-  * Save settings from POST
-  * @return [type] [description]
+  * Save settings from `$_POST` array on form submission
+  *
+  * Runs a nonce check, validates each field value, builds an array of validated values
+  * and updates the option in the database.
+  *
+  * @uses `update_option()`
+  * @return void
   */
   public function saveSettings() {
 
@@ -201,11 +206,11 @@ class Controller extends RenderPage {
 
     }
 
-    foreach ($this->fields as $tab => $tab_data ) {
+    foreach ( $this->fields as $tab => $tab_fields_data ) {
 
-      foreach ($tab_data as $name => $field) {
+      foreach ( $tab_fields_data as $field_name => $field_data ) {
 
-        $this->settings[ $name ] = $this->{ 'validate_' . $field['type'] }( $name );
+        $this->settings[ $field_name ] = $this->{ 'validate_' . $field_data['type'] }( $field_name );
 
       }
 

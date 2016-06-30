@@ -24,7 +24,7 @@ class RenderPage extends RenderFields {
    */
   public function create_menu_page() {
 
-    $this->save_if_submit();
+    $this->saveIfSubmitted();
 
     // The default tab is 'general'
     // @TODO: set the default tab as a property for better "Single Responsibility"
@@ -41,6 +41,8 @@ class RenderPage extends RenderFields {
 
     ?>
     <div class="wrap">
+      <?php
+      //var_dump($this->fields); ?>
       <h2><?php echo $this->menu_options['page_title'] ?></h2>
       <?php
       echo ! empty( $this->menu_options['desc'] )

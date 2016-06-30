@@ -1,17 +1,28 @@
 <?php
 namespace Carawebs\OrganisePosts\Settings;
 
+/**
+ * Validator methods for user input in the settings pages
+ *
+ * Each method differs according to the type of field being validated, but each method:
+ * - Returns existing relevant options data from the database
+ * - Overrides this with the validated POSTed value if this is set
+ */
 trait Validator {
-
 
   /**
    * Validate text field
+   *
+   * @uses wp_kses_post()
+   * @uses trim()
+   * @uses stripslashes()
    * @param  string $key name of the field
-   * @return string
+   * @return string $text
    */
   public function validate_text( $key ) {
 
     $text  = $this->get_option( $key );
+
     if ( isset( $this->posted_data[ $key ] ) ) {
 
       $text = wp_kses_post( trim( stripslashes( $this->posted_data[ $key ] ) ) );
@@ -19,31 +30,28 @@ trait Validator {
     }
 
     return $text;
+
   }
 
   /**
-   * Validate textarea field
+   * Validate textarea field - same as the wp_editor validation, so send it on!
+   *
    * @param  string $key name of the field
    * @return string
    */
-  public function validate_textarea( $key ){
-    $text  = $this->get_option( $key );
+  public function validate_textarea( $key ) {
 
-    if ( isset( $this->posted_data[ $key ] ) ) {
-      $text = wp_kses( trim( stripslashes( $this->posted_data[ $key ] ) ),
-        array_merge(
-          array(
-            'iframe' => array( 'src' => true, 'style' => true, 'id' => true, 'class' => true )
-          ),
-          wp_kses_allowed_html( 'post' )
-        )
-      );
-    }
-    return $text;
+    return $this->validate_wpeditor( $key );
+
   }
 
   /**
-   * Validate WPEditor field
+   * Validate wp_editor field
+   *
+   * @uses wp_kses()
+   * @uses trim()
+   * @uses stripslashes()
+   * @uses wp_kses_allowed_html()
    * @param  string $key name of the field
    * @return string
    */
@@ -51,16 +59,19 @@ trait Validator {
     $text  = $this->get_option( $key );
 
     if ( isset( $this->posted_data[ $key ] ) ) {
-      $text = wp_kses( trim( stripslashes( $this->posted_data[ $key ] ) ),
-        array_merge(
-          array(
-            'iframe' => array( 'src' => true, 'style' => true, 'id' => true, 'class' => true )
-          ),
-          wp_kses_allowed_html( 'post' )
-        )
+
+      $content = trim( stripslashes( $this->posted_data[ $key ] ) );
+
+      $allowed_tags = array_merge(
+        [ 'iframe' => [ 'src' => true, 'style' => true, 'id' => true, 'class' => true ] ],
+        wp_kses_allowed_html( 'post' )
       );
+
+      $text = wp_kses( $content, $allowed_tags );
     }
+
     return $text;
+
   }
 
   /**
@@ -75,6 +86,7 @@ trait Validator {
     }
     return $value;
   }
+
   /**
    * Validate radio
    * @param  string $key name of the field
@@ -87,6 +99,7 @@ trait Validator {
     }
     return $value;
   }
+
   /**
    * Validate checkbox field
    * @param  string $key name of the field

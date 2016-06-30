@@ -53,15 +53,23 @@ fields:
 -
  tab:  general
  args:
-   name:   address_line_1
-   title:  Address Line One
-   desc:   The first line
+   name:  textarea_content
+   title: Text Content
+   desc:  The first line
+   type:  textarea
 -
  tab:  general
  args:
    name:   address_line_2
    title:  Address Line Two
    desc:   The second line
+-
+ tab:  general
+ args:
+   name:  main_content
+   title: Some Content
+   desc:  add some wysiwyg magic!
+   type:  wpeditor
 -
  tab:  contact
  args:
