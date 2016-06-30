@@ -6,11 +6,13 @@ namespace Carawebs\OrganisePosts\Settings;
  */
 class Config {
 
-  public function __construct( $plugin_slug ) {
+  public function __construct( $plugin_slug, $yamlParser, $datafile = NULL ) {
 
-    $this->plugin_slug = $plugin_slug;
+    $this->yamlParser   = $yamlParser;
+    $this->datafile     = ! empty( $datafile ) ? CW_ORGANISE_POSTS_PLUGIN_PATH . $datafile : CW_ORGANISE_POSTS_PLUGIN_PATH . 'src/Settings/data.php';
+    $this->plugin_slug  = $plugin_slug;
     $this->setConfig();
-    $this->settings_id = $this->config['default_page_options']['slug'];
+    $this->settings_id  = $this->config['default_page_options']['slug'];
 
   }
 
@@ -19,13 +21,27 @@ class Config {
    */
   public function setConfig() {
 
-    $this->config = include_once( CW_ORGANISE_POSTS_PLUGIN_PATH . 'src/Settings/data.php' );
+    if( 'yml' === pathinfo( $this->datafile, PATHINFO_EXTENSION ) ) {
+
+      $this->config = $this->convertYAML();
+
+    } else {
+
+      $this->config = include_once( $this->datafile );
+
+    }
 
   }
 
   public function getConfig() {
 
     return $this->config;
+
+  }
+
+  public function convertYAML() {
+
+    return $this->yamlParser->parse( file_get_contents( $this->datafile ) );
 
   }
 

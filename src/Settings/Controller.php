@@ -24,12 +24,22 @@ class Controller extends RenderPage {
 
   public function __construct ( Config $config, $saveSettings ) {
 
+    // Config object
     $this->config       = $config->getConfig();
+
+    //var_dump($this->config);
+
     // Set the unique ID for these settings
     $this->settings_id = $this->config['default_page_options']['slug'];
+
+    // If a submenu page has been specified, set `$this->parent_id`
+    $this->parent_id = $this->config['default_page_options']['parent'] ?: NULL;
+
+    // Settings object
     $this->saveSettings = $saveSettings;
-    //$this->settings     = (array) get_option( $this->settings_id );
+
     $this->menu_options = $this->config['default_page_options'];
+
     $this->field_args   = $this->config['fields'];
 
 
@@ -51,14 +61,14 @@ class Controller extends RenderPage {
   */
   public function prepopulate() {
 
-    $this->menu_options['title'] = $this->menu_options['title']
-    ?: ucfirst( $this->menu_options['slug'] );
+    $this->menu_options['title'] = ! empty( $this->menu_options['title'] )
+    ? $this->menu_options['title'] : ucfirst( $this->menu_options['slug'] );
 
-    $this->menu_options['page_title'] = $this->menu_options['page_title']
-    ?: $this->menu_options['page_title'] = $this->menu_options['title'];
+    $this->menu_options['page_title'] = ! empty( $this->menu_options['page_title'] )
+    ? $this->menu_options['page_title'] : $this->menu_options['page_title'] = $this->menu_options['title'];
 
-    $this->menu_options['function'] = $this->menu_options['function']
-    ?: 'create_menu_page';
+    $this->menu_options['function'] = ! empty( $this->menu_options['function'] )
+    ? $this->menu_options['function'] : 'create_menu_page';
 
   }
 

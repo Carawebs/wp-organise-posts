@@ -1,19 +1,53 @@
 <?php
+
+/**
+ * Data File holding config data for the plugin settings
+ *
+ */
+
+// If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) {
+  die;
+}
+
 return [
 
   // Page Options
   // ---------------------------------------------------------------------------
   'default_page_options' => [
-    'slug'        => 'test_wpmenu',             // Name of the menu item
-    'title'       => 'Fantastic Page',          // Title displayed on the top of the admin panel
-    'page_title'  => 'Fantastic Page',          // Settings Page Title
-    'parent'      => NULL,                      // id of parent, if blank, then this is a top level menu
-    'id'          => '',                        // Unique ID of the menu item
-    'capability'  => 'manage_options',          // User role
-    'icon'        => 'dashicons-admin-generic', // Menu icon for top level menus only http://melchoyce.github.io/dashicons/
-    'position'    => NULL,                      // Menu position. Can be used for both top and sub level menus
-    'desc'        => 'This is the description', // Description displayed below the title
-    'function'    => ''
+
+    // Name of the menu item, and the options table key
+    // -------------------------------------------------------------------------
+    'slug'        => 'carawebs_organise_posts',
+
+    // Title displayed on the top of the admin panel
+    'title'       => 'Organise Posts',
+
+    // Settings page title
+    'page_title'  => 'Organise Posts',
+
+    // slug of parent page - if NULL, then this is a top level menu
+    // Options:
+    // 'options-general.php'  Sub Page under 'Settings' menu item
+    // 'tools.php'            Sub page under 'Tools' menu item
+    'parent'      => NULL,
+
+    // Unique ID of the menu item
+    'id'          => NULL,
+
+    // User role necessary to access the settings page
+    'capability'  => 'manage_options',
+
+    // Icon URL | Dashicons helper class | 'none' | base64-encoded SVG using a data URI
+    // @see https://developer.wordpress.org/resource/dashicons/#format-gallery
+    'icon'        => 'dashicons-format-gallery',
+
+    // position in the menu order this menu item will appear
+    'position'    => '89',
+
+    // Description displayed below the title
+    'desc'        => 'This is the description',
+
   ],
 
   // Set up tabs
@@ -64,6 +98,15 @@ return [
           '1' => 'Radio One',
           '2' => 'Radio Two'
         ]
+      ]
+    ],
+    [
+      'tab' => 'social_media_settings',
+      'args' => [
+        'name' => 'sm_wpeditor',
+        'type' => 'wpeditor',
+        'title' => 'WYSIWYG Input',
+        'desc' => 'Input Description'
       ]
     ],
     [

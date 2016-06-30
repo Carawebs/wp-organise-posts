@@ -204,8 +204,10 @@ function settings() {
     autoload();
 
     $controller = new Settings\Controller(
-      new Settings\Config('organise-posts'),
-      new Settings\SaveSettings()
+      new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data.yml' ),
+      //new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser() ),
+      new Settings\SaveSettings(),
+      'options-general.php'
     );
 
     //settings();
