@@ -203,11 +203,15 @@ function settings() {
 
     autoload();
 
-    $controller = new Settings\Controller(
+    $settings = new Settings\Controller(
       new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data.yml' ),
-      //new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser() ),
-      new Settings\SaveSettings(),
+      //new Settings\SaveSettings(),
       'options-general.php'
+    );
+
+    $settings2 = new Settings\Controller(
+      new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data2.yml' )
+      //new Settings\SaveSettings()
     );
 
     //settings();
@@ -215,14 +219,8 @@ function settings() {
     // Controller class is responsible to instantiate objects and attach their methods to proper hooks.
     $controller = new Controller();
 
-    // Instantiate config class
-    $config = new Config(
-        [ 'plugin-path'   => __FILE__ ],
-        SettingsPage::defaults()
-    );
-
     // Setup backend actions
-    $controller->setupBackendActions($config);
+    //$controller->setupBackendActions($config);
 
     // Setup frontend action
     //$controller->setupFrontendActions($config);

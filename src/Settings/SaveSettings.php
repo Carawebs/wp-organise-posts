@@ -1,6 +1,9 @@
 <?php
 namespace Carawebs\OrganisePosts\Settings;
 
+/**
+ * Class that saves plugin settings
+ */
 class SaveSettings {
 
   use Validator;
@@ -88,6 +91,5 @@ class SaveSettings {
     return $this->settings[ $key ];
 
   }
-
 
 }

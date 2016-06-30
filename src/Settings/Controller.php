@@ -4,6 +4,7 @@ namespace Carawebs\OrganisePosts\Settings;
 class Controller extends RenderPage {
 
   use Validator;
+  //use SaveSettings;
   /**
   * Settings from database
   * @var array
@@ -22,7 +23,8 @@ class Controller extends RenderPage {
   */
   public $parent_id = NULL;
 
-  public function __construct ( Config $config, $saveSettings ) {
+  //public function __construct ( Config $config, $saveSettings ) {
+  public function __construct ( Config $config ) {
 
     // Config object
     $this->config       = $config->getConfig();
@@ -36,7 +38,7 @@ class Controller extends RenderPage {
     $this->parent_id = $this->config['default_page_options']['parent'] ?: NULL;
 
     // Settings object
-    $this->saveSettings = $saveSettings;
+    //$this->saveSettings = $saveSettings;
 
     $this->menu_options = $this->config['default_page_options'];
 
