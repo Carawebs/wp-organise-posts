@@ -1,7 +1,7 @@
 <?php
 namespace Carawebs\OrganisePosts\Settings;
 
-class RenderFields extends Controller {
+class RenderFields {
 
   /**
   * Rendering fields
@@ -11,7 +11,7 @@ class RenderFields extends Controller {
   public function render_fields( $tab ) {
 
     if( ! isset( $this->fields[ $tab ] ) ) {
-      echo '<p>' . __( 'There are no settings on these page.', 'textdomain' ) . '</p>';
+      echo '<p>' . __( 'There are no settings for this page.', 'textdomain' ) . '</p>';
       return;
     }
 
@@ -52,10 +52,10 @@ class RenderFields extends Controller {
 
     <tr>
       <th>
-        <label for="<?php echo $name; ?>"><?php echo $title; ?></label>
+        <label for="<?= $name; ?>"><?= $title; ?></label>
       </th>
       <td>
-        <input type="<?php echo $type; ?>" name="<?php echo $name; ?>" id="<?php echo $name; ?>" value="<?php echo $default; ?>" placeholder="<?php echo $placeholder; ?>" />
+        <input type="<?= $type; ?>" name="<?= $name; ?>" id="<?= $name; ?>" value="<?= $default; ?>" placeholder="<?= $placeholder; ?>" />
         <?php if( $desc != '' ) {
           echo '<p class="description">' . $desc . '</p>';
         }?>
@@ -76,10 +76,10 @@ class RenderFields extends Controller {
 
     <tr>
       <th>
-        <label for="<?php echo $name; ?>"><?php echo $title; ?></label>
+        <label for="<?= $name; ?>"><?= $title; ?></label>
       </th>
       <td>
-        <textarea name="<?php echo $name; ?>" id="<?php echo $name; ?>" placeholder="<?php echo $placeholder; ?>" ><?php echo $default; ?></textarea>
+        <textarea name="<?= $name; ?>" id="<?= $name; ?>" placeholder="<?= $placeholder; ?>" ><?= $default; ?></textarea>
         <?php if( $desc != '' ) {
           echo '<p class="description">' . $desc . '</p>';
         }?>
@@ -101,7 +101,7 @@ class RenderFields extends Controller {
 
     <tr>
       <th>
-        <label for="<?php echo $name; ?>"><?php echo $title; ?></label>
+        <label for="<?= $name; ?>"><?= $title; ?></label>
       </th>
       <td>
         <?php wp_editor( $default, $name, array('wpautop' => false) ); ?>
@@ -125,10 +125,10 @@ class RenderFields extends Controller {
 
     <tr>
       <th>
-        <label for="<?php echo $name; ?>"><?php echo $title; ?></label>
+        <label for="<?= $name; ?>"><?= $title; ?></label>
       </th>
       <td>
-        <select name="<?php echo $name; ?>" id="<?php echo $name; ?>" >
+        <select name="<?= $name; ?>" id="<?= $name; ?>" >
           <?php
           foreach ($options as $value => $text) {
             echo '<option ' . selected( $default, $value, false ) . ' value="' . $value . '">' . $text . '</option>';
@@ -155,7 +155,7 @@ class RenderFields extends Controller {
 
     <tr>
       <th>
-        <label for="<?php echo $name; ?>"><?php echo $title; ?></label>
+        <label for="<?= $name; ?>"><?= $title; ?></label>
       </th>
       <td>
         <?php
@@ -183,11 +183,11 @@ class RenderFields extends Controller {
 
     <tr>
       <th>
-        <label for="<?php echo $name; ?>"><?php echo $title; ?></label>
+        <label for="<?= $name; ?>"><?= $title; ?></label>
       </th>
       <td>
-        <input <?php checked( $default, '1', true ); ?> type="<?php echo $type; ?>" name="<?php echo $name; ?>" id="<?php echo $name; ?>" value="1" placeholder="<?php echo $placeholder; ?>" />
-        <?php echo $desc; ?>
+        <input <?php checked( $default, '1', true ); ?> type="<?= $type; ?>" name="<?= $name; ?>" id="<?= $name; ?>" value="1" placeholder="<?= $placeholder; ?>" />
+        <?= $desc; ?>
       </td>
     </tr>
 

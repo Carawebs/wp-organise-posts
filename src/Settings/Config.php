@@ -37,8 +37,6 @@ class Config {
 
     $this->settings = (array) get_option( $this->settings_id );
 
-    //var_dump($this->settings);
-
     foreach ( $this->fields as $tab_key => $tab ) {
 
       foreach ( $tab as $name => $field ) {

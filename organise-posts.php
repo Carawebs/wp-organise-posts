@@ -203,7 +203,10 @@ function settings() {
 
     autoload();
 
-    $controller = new Settings\Controller( new Settings\Config('organise-posts') );
+    $controller = new Settings\Controller(
+      new Settings\Config('organise-posts'),
+      new Settings\SaveSettings()
+    );
 
     //settings();
 

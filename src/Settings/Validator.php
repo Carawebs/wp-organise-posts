@@ -1,7 +1,7 @@
 <?php
 namespace Carawebs\OrganisePosts\Settings;
 
-class Validator extends Controller {
+trait Validator {
 
 
   /**
