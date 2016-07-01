@@ -104,6 +104,11 @@ function settings() {
     autoload();
     settings();
 
+    if( defined( 'WP_CLI' ) && WP_CLI ) {
+      require_once( dirname( __FILE__ ) . '/WPCLI/Convert.php' );
+      return;
+    }
+
     // Controller class is responsible to instantiate objects and attach their methods to proper hooks.
     $controller = new Controller();
 
