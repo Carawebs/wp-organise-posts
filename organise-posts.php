@@ -69,10 +69,11 @@ function settings() {
     'title' => 'Organise Posts',
     'desc' => 'Settings for theme custom WordPress Menu',
     'icon' => 'dashicons-welcome-widgets-menus',
-    'position' => 99,
+    'position' => 89,
   ];
 
-  $menu_page = new \Carawebs\OrganisePosts\Settings\MenuPage( $menu_page_args, 'options-general.php' );
+  //$menu_page = new \Carawebs\OrganisePosts\Settings\MenuPage( $menu_page_args, 'options-general.php' );
+  $menu_page = new \Carawebs\OrganisePosts\Settings\MenuPage( $menu_page_args );
   // Build a settings page as a sub-page of an existing menu item (in this case, under the "Settings" Menu)
   // $menu_page = new \Carawebs\OrganisePosts\Settings\Menu( $menu_page_args, 'options-general.php' );
 
