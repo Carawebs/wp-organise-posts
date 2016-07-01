@@ -29,16 +29,12 @@ class RenderFields {
 
     ob_start();
     ?>
-    <input
-      type="hidden"
-      name="action"
-      value="<?= esc_attr( $this->action ) ?>">
-    <input
-      type="hidden"
-      name="<?= esc_attr( $this->nonce_key ) ?>"
+    <input type="hidden" name="action" value="<?= esc_attr( $this->action ) ?>">
+    <input type="hidden" name="<?= esc_attr( $this->nonce_key ) ?>"
       value="<?= esc_attr( wp_create_nonce( $this->nonce_action ) ) ?>">
     <?php
     echo ob_get_clean();
+    
   }
 
   /**
@@ -46,23 +42,15 @@ class RenderFields {
   * @param  string $field options
   * @return void
   */
-  public function render_text( $field ){
+  public function render_text( $field ) {
+
     extract( $field );
-    ?>
+    ob_start();
+    echo "<input type='$type' name='$name' id='$name' value='$default' placeholder='$placeholder'/>";
+    echo ! empty( $desc ) ? "<p class='description'>$desc</p>" : NULL;
+    $fieldSpecific = ob_get_clean();
+    echo $this->genericField( $fieldSpecific, $name, $title );
 
-    <tr>
-      <th>
-        <label for="<?= $name; ?>"><?= $title; ?></label>
-      </th>
-      <td>
-        <input type="<?= $type; ?>" name="<?= $name; ?>" id="<?= $name; ?>" value="<?= $default; ?>" placeholder="<?= $placeholder; ?>" />
-        <?php if( $desc != '' ) {
-          echo '<p class="description">' . $desc . '</p>';
-        }?>
-      </td>
-    </tr>
-
-    <?php
   }
 
   /**
@@ -70,23 +58,15 @@ class RenderFields {
   * @param  string $field options
   * @return void
   */
-  public function render_textarea( $field ){
+  public function render_textarea( $field ) {
+
     extract( $field );
-    ?>
+    ob_start();
+    echo "<textarea name='$name' id='$name' placeholder='$placeholder'>$default</textarea>";
+    echo ! empty( $desc ) ? "<p class='description'>$desc</p>" : NULL;
+    $fieldSpecific = ob_get_clean();
+    echo $this->genericField( $fieldSpecific, $name, $title );
 
-    <tr>
-      <th>
-        <label for="<?= $name; ?>"><?= $title; ?></label>
-      </th>
-      <td>
-        <textarea name="<?= $name; ?>" id="<?= $name; ?>" placeholder="<?= $placeholder; ?>" ><?= $default; ?></textarea>
-        <?php if( $desc != '' ) {
-          echo '<p class="description">' . $desc . '</p>';
-        }?>
-      </td>
-    </tr>
-
-    <?php
   }
 
   /**
@@ -97,21 +77,12 @@ class RenderFields {
   public function render_wpeditor( $field ){
 
     extract( $field );
-    ?>
+    ob_start();
+    wp_editor( $default, $name, array('wpautop' => false) );
+    echo ! empty( $desc ) ? "<p class='description'>$desc</p>" : NULL;
+    $fieldSpecific = ob_get_clean();
+    echo $this->genericField( $fieldSpecific, $name, $title );
 
-    <tr>
-      <th>
-        <label for="<?= $name; ?>"><?= $title; ?></label>
-      </th>
-      <td>
-        <?php wp_editor( $default, $name, array('wpautop' => false) ); ?>
-        <?php if( $desc != '' ) {
-          echo '<p class="description">' . $desc . '</p>';
-        }?>
-      </td>
-    </tr>
-
-    <?php
   }
 
   /**
@@ -120,28 +91,18 @@ class RenderFields {
   * @return void
   */
   public function render_select( $field ) {
+
     extract( $field );
-    ?>
+    ob_start();
+    echo "<select name='$name' id='$name'>";
+      foreach ( $options as $value => $text ) {
+        echo "<option " . selected( $default, $value, false ) . " value='$value'>$text</option>";
+      }
+    echo "</select>";
+    echo ! empty( $desc ) ? "<p class='description'>$desc</p>" : NULL;
+    $fieldSpecific = ob_get_clean();
+    echo $this->genericField( $fieldSpecific, $name, $title );
 
-    <tr>
-      <th>
-        <label for="<?= $name; ?>"><?= $title; ?></label>
-      </th>
-      <td>
-        <select name="<?= $name; ?>" id="<?= $name; ?>" >
-          <?php
-          foreach ($options as $value => $text) {
-            echo '<option ' . selected( $default, $value, false ) . ' value="' . $value . '">' . $text . '</option>';
-          }
-          ?>
-        </select>
-        <?php if( $desc != '' ) {
-          echo '<p class="description">' . $desc . '</p>';
-        }?>
-      </td>
-    </tr>
-
-    <?php
   }
 
   /**
@@ -150,26 +111,16 @@ class RenderFields {
   * @return void
   */
   public function render_radio( $field ) {
+
     extract( $field );
-    ?>
+    ob_start();
+    foreach ( $options as $value => $text ) {
+      echo "<input name='$name' id='$name' type='$type' " . checked( $default, $value, false ) . "value='$value'>$text</option><br/>";
+    }
+    echo ! empty( $desc ) ? "<p class='description'>$desc</p>" : NULL;
+    $fieldSpecific = ob_get_clean();
+    echo $this->genericField( $fieldSpecific, $name, $title );
 
-    <tr>
-      <th>
-        <label for="<?= $name; ?>"><?= $title; ?></label>
-      </th>
-      <td>
-        <?php
-        foreach ($options as $value => $text) {
-          echo '<input name="' . $name . '" id="' . $name . '" type="'.  $type . '" ' . checked( $default, $value, false ) . ' value="' . $value . '">' . $text . '</option><br/>';
-        }
-        ?>
-        <?php if( $desc != '' ) {
-          echo '<p class="description">' . $desc . '</p>';
-        }?>
-      </td>
-    </tr>
-
-    <?php
   }
 
   /**
@@ -178,20 +129,34 @@ class RenderFields {
   * @return void
   */
   public function render_checkbox( $field ) {
-    extract( $field );
-    ?>
 
+    extract( $field );
+    ob_start();
+    ?>
+    <input <?php checked( $default, '1', true ); ?> type="<?= $type; ?>" name="<?= $name; ?>" id="<?= $name; ?>" value="1" placeholder="<?= $placeholder; ?>" />
+    <?= $desc;
+    $fieldSpecific = ob_get_clean();
+    echo $this->genericField( $fieldSpecific, $name, $title );
+
+  }
+
+  public function genericField( $fieldSpecific, $name, $title ) {
+
+    ob_start();
+
+    ?>
     <tr>
       <th>
         <label for="<?= $name; ?>"><?= $title; ?></label>
       </th>
       <td>
-        <input <?php checked( $default, '1', true ); ?> type="<?= $type; ?>" name="<?= $name; ?>" id="<?= $name; ?>" value="1" placeholder="<?= $placeholder; ?>" />
-        <?= $desc; ?>
+        <?= $fieldSpecific ?>
       </td>
     </tr>
 
     <?php
+    return ob_get_clean();
+
   }
 
 }

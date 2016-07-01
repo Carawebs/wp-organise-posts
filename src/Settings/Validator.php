@@ -82,7 +82,7 @@ trait Validator {
   public function validate_select( $key ) {
     $value = $this->get_option( $key );
     if ( isset( $this->posted_data[ $key ] ) ) {
-      $value = wc_clean( stripslashes( $this->posted_data[ $key ] ) );
+      $value = sanitize_text_field( stripslashes( $this->posted_data[ $key ] ) );
     }
     return $value;
   }

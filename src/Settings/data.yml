@@ -60,9 +60,14 @@ fields:
 -
  tab:  general
  args:
-   name:   address_line_2
-   title:  Address Line Two
-   desc:   The second line
+   name:  address_line_2
+   title: Address Line Two
+   desc:  The second line
+   type:  select
+   options:
+     one: First Option
+     two: Second Option
+     third: Third Option
 -
  tab:  general
  args:
@@ -70,6 +75,17 @@ fields:
    title: Some Content
    desc:  add some wysiwyg magic!
    type:  wpeditor
+-
+  tab:  general
+  args:
+    name:  radio_test
+    title: Radio Test
+    desc:  radio radio!
+    type:  radio
+    options:
+      one: First Option
+      two: Second Option
+      third: Third Option
 -
  tab:  contact
  args:
