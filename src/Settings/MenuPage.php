@@ -1,7 +1,7 @@
 <?php
 namespace Carawebs\OrganisePosts\Settings;
 
-class Controller extends RenderPage {
+class MenuPage extends RenderPage {
 
   use Validator;
   //use SaveSettings;
@@ -17,6 +17,8 @@ class Controller extends RenderPage {
 
   protected $nonce_key    = '_carawebs-organise-posts';
 
+  protected $settings_id;
+
   /**
   * Gets populated on submenus, contains slug of parent menu
   * @var null
@@ -28,8 +30,6 @@ class Controller extends RenderPage {
 
     // Config object
     $this->config       = $config->getConfig();
-
-    //var_dump($this->config);
 
     // Set the unique ID for these settings
     $this->settings_id = $this->config['default_page_options']['slug'];

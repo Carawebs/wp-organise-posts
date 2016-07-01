@@ -9,13 +9,13 @@ default_page_options:
   title: YAML2
 
   # Settings page title
-  page_title:  YAML Organise Posts
+  page_title:  YAML2 Organise Posts
 
   # slug of parent page   if NULL then this is a top level menu
   # Options:
   # options general.php  Sub Page under Settings menu item
   # tools.php            Sub page under Tools menu item
-  parent:       carawebs_yaml_organise_posts #NULL #options-general.php
+  parent:       NULL #options-general.php
 
   # Unique ID of the menu item
   id:           NULL
@@ -36,7 +36,7 @@ default_page_options:
 # ------------------------------------------------------------------------------
 tabs:
   general:
-    slug:  main
+    slug:  general
     title:  Main
 
   contact:
@@ -51,19 +51,19 @@ tabs:
 # ------------------------------------------------------------------------------
 fields:
 -
- tab:  main
+ tab:  general
  args:
    name:   address_line_1
    title:  Main Line One
    desc:   The first line
 -
- tab:  main
+ tab:  general
  args:
    name:   address_line_2
    title:  Main Line Two
    desc:   The second line
 -
- tab:  main
+ tab:  general
  args:
    name:   town
    title:  Town

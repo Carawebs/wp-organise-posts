@@ -74,13 +74,14 @@ function autoload() {
 
 function settings() {
 
-  $settings = new Settings\Controller(
+  $settings = new Settings\MenuPage(
     new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data2.yml' )
     //new Settings\SaveSettings()
   );
 
-  $settings2 = new Settings\Controller(
-    new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/fromyaml.php' )
+  $settings2 = new Settings\SubMenuPage(
+    new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/fromyaml.php' ),
+    $settings
     //new Settings\SaveSettings()
   );
 
