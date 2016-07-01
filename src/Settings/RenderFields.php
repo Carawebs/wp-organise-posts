@@ -25,6 +25,10 @@ class RenderFields {
 
   }
 
+  /**
+   * Output nonce fields
+   * @return string HTML markup for nonce fields
+   */
   public function nonce() {
 
     ob_start();
@@ -34,13 +38,13 @@ class RenderFields {
       value="<?= esc_attr( wp_create_nonce( $this->nonce_action ) ) ?>">
     <?php
     echo ob_get_clean();
-    
+
   }
 
   /**
   * Render text field
   * @param  string $field options
-  * @return void
+  * @return string HTML markup for text field
   */
   public function render_text( $field ) {
 
@@ -56,7 +60,7 @@ class RenderFields {
   /**
   * Render textarea field
   * @param  string $field options
-  * @return void
+  * @return string HTML markup for textarea field
   */
   public function render_textarea( $field ) {
 
@@ -72,7 +76,7 @@ class RenderFields {
   /**
   * Render WPEditor field
   * @param  string $field  options
-  * @return void
+  * @return string HTML markup for wp_editor
   */
   public function render_wpeditor( $field ){
 
@@ -88,7 +92,7 @@ class RenderFields {
   /**
   * Render select field
   * @param  string $field options
-  * @return void
+  * @return string HTML markup for select field
   */
   public function render_select( $field ) {
 
@@ -108,7 +112,7 @@ class RenderFields {
   /**
   * Render radio
   * @param  string $field options
-  * @return void
+  * @return string HTML markup for radio field
   */
   public function render_radio( $field ) {
 
@@ -126,7 +130,7 @@ class RenderFields {
   /**
   * Render checkbox field
   * @param  string $field options
-  * @return void
+  * @return string HTML markup for checkbox field
   */
   public function render_checkbox( $field ) {
 
@@ -140,10 +144,16 @@ class RenderFields {
 
   }
 
+  /**
+   * Generic field markup
+   * @param  string $fieldSpecific Specific field markup
+   * @param  string $name          Name
+   * @param  string $title         Title
+   * @return string                Field markup with field-specific markup inserted
+   */
   public function genericField( $fieldSpecific, $name, $title ) {
 
     ob_start();
-
     ?>
     <tr>
       <th>
@@ -153,7 +163,6 @@ class RenderFields {
         <?= $fieldSpecific ?>
       </td>
     </tr>
-
     <?php
     return ob_get_clean();
 
