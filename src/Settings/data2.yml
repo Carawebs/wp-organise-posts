@@ -15,7 +15,7 @@ default_page_options:
   # Options:
   # options general.php  Sub Page under Settings menu item
   # tools.php            Sub page under Tools menu item
-  parent:       NULL #options-general.php
+  parent:       carawebs_yaml_organise_posts #NULL #options-general.php
 
   # Unique ID of the menu item
   id:           NULL

@@ -25,6 +25,12 @@ class Config {
 
       $this->config = $this->convertYAML();
 
+      // $openingString = "<?php\n return\n";
+      // $closingString = ";";
+      // $fp = fopen( CW_ORGANISE_POSTS_PLUGIN_PATH . 'src/Settings/fromyaml.php', 'w' );
+      // fwrite( $fp, $openingString . var_export($this->config, TRUE ) . $closingString );
+      // fclose( $fp );
+
     } else {
 
       $this->config = include_once( $this->datafile );

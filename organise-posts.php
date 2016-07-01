@@ -74,115 +74,14 @@ function autoload() {
 
 function settings() {
 
-  $menu_page_args = [
-    'slug' => 'test_wpmenu',
-    'title' => 'Organise Posts',
-    'desc' => 'Settings for theme custom WordPress Menu',
-    'icon' => 'dashicons-welcome-widgets-menus',
-    'position' => 99,
-  ];
-
-  $menu_page = new \Carawebs\OrganisePosts\Settings\MenuPage( $menu_page_args, 'options-general.php' );
-  // Build a settings page as a sub-page of an existing menu item (in this case, under the "Settings" Menu)
-  // $menu_page = new \Carawebs\OrganisePosts\Settings\Menu( $menu_page_args, 'options-general.php' );
-
-  $menu_page->add_field(
-    [
-      'name'  => 'address_line_1',
-      'title' => 'Address Line One',
-      'desc'  => 'The first line'
-    ]
+  $settings = new Settings\Controller(
+    new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data2.yml' )
+    //new Settings\SaveSettings()
   );
 
-  $menu_page->add_field(
-    [
-      'name'  => 'checkbox',
-      'title' => 'Checkbox Example',
-      'desc'  => 'Check it to wake it',
-      'type'  => 'checkbox'
-    ]
-  );
-
-  $menu_page->add_field(
-    [
-      'name' => 'radio',
-      'title' => 'Radio Example',
-      'desc' => 'Make a selection',
-      'type' => 'radio',
-      'options' => [
-        '1' => 'Radio One',
-        '2' => 'Radio Two'
-        ]
-    ]
-  );
-
-  $menu_page->add_field(
-    [
-      'name' => 'radio2',
-      'title' => 'Radio Example 2',
-      'desc' => 'Make a selection',
-      'type' => 'radio',
-      'options' => [
-        'one' => 'Radio One',
-        'two' => 'Radio Two',
-        'three' => 'Radio Three'
-        ]
-    ]
-  );
-
-  $menu_page->add_field(
-    [
-      'name' => 'main_wpeditor',
-      'type' => 'wpeditor',
-      'title' => 'WYSIWYG Input',
-      'desc' => 'Input Description'
-    ]
-  );
-
-  // Creating tab with our custom wordpress menu
-  $customTab = new \Carawebs\OrganisePosts\Settings\MenuTab(
-    [
-      'slug' => 'email_settings',
-      'title' => 'Email Settings'
-    ],
-    $menu_page );
-
-  $customTab->add_field(
-    [
-      'name' => 'main_email',
-      'title' => 'Main Email',
-      'type' => 'text',
-    ] );
-
-  // Creating tab with our custom wordpress menu
-  $SMTab = new \Carawebs\OrganisePosts\Settings\MenuTab(
-    [
-      'slug' => 'social_media_settings',
-      'title' => 'Social Media'
-    ],
-    $menu_page );
-
-  $SMTab->add_field(
-    [
-      'name' => 'facebook',
-      'title' => 'Facebook',
-      'type' => 'text',
-    ]);
-
-  $SMTab->add_field(
-    [
-      'name' => 'twitter',
-      'title' => 'Twitter',
-      'type' => 'text',
-    ]);
-
-  $SMTab->add_field(
-    [
-      'name' => 'sm_wpeditor',
-      'type' => 'wpeditor',
-      'title' => 'WYSIWYG Input',
-      'desc' => 'Enter some stuff'
-    ]
+  $settings2 = new Settings\Controller(
+    new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/fromyaml.php' )
+    //new Settings\SaveSettings()
   );
 
 }
@@ -202,19 +101,7 @@ function settings() {
 ( defined('DOING_AJAX') && DOING_AJAX) or add_action( 'wp_loaded', function () {
 
     autoload();
-
-    $settings = new Settings\Controller(
-      new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data.yml' ),
-      //new Settings\SaveSettings(),
-      'options-general.php'
-    );
-
-    $settings2 = new Settings\Controller(
-      new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data2.yml' )
-      //new Settings\SaveSettings()
-    );
-
-    //settings();
+    settings();
 
     // Controller class is responsible to instantiate objects and attach their methods to proper hooks.
     $controller = new Controller();
