@@ -19,6 +19,8 @@ class RenderFields {
 
     foreach ( $this->fields[ $tab ] as $name => $field ) {
 
+      //var_dump( $this->fields[ $tab ] );
+
       $this->{ 'render_' . $field['type'] }( $field );
 
     }
@@ -133,10 +135,12 @@ class RenderFields {
   * @return string HTML markup for checkbox field
   */
   public function render_checkbox( $field ) {
+    error_log( json_encode($field));
 
     extract( $field );
     ob_start();
     ?>
+    <input type="hidden" name="<?= $name; ?>" value="0">
     <input <?php checked( $default, '1', true ); ?> type="<?= $type; ?>" name="<?= $name; ?>" id="<?= $name; ?>" value="1" placeholder="<?= $placeholder; ?>" />
     <?php
     echo ! empty( $desc ) ? "<p class='description'>$desc</p>" : NULL;
@@ -151,6 +155,8 @@ class RenderFields {
   * @return string HTML markup for checkbox field
   */
   public function render_cpt_selector( $field ) {
+
+    error_log( "FIELD: " . json_encode($field) );
 
     extract( $field );
     ob_start();
@@ -168,7 +174,7 @@ class RenderFields {
       if ( isset( $default ) && is_array( $default ) ) {
         $checked = in_array( $post_type->name, $default ) ? "checked='checked'" : NULL;
       }
-
+    echo "<input type='hidden' name='{$name}[]' value='0'>";
     echo "<label><input type='checkbox' name='{$name}[]' value='{$post_type->name}'$checked>&nbsp;$post_type->label</label><br>";
 
     }

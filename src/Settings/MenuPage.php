@@ -49,6 +49,7 @@ class MenuPage extends RenderPage {
     $this->prepopulate();
 
     add_action( 'admin_menu', [ $this, 'add_page' ] );
+    add_action( 'wordpressmenu_page_save_' . $this->settings_id, array( $this, 'saveSettings' ) );
     $this->add_tabs();
 
   }
@@ -167,17 +168,21 @@ class MenuPage extends RenderPage {
    */
   protected function saveIfSubmitted() {
 
+    // if( isset( $_POST[ $this->settings_id . '_save' ] ) ) {
+    //
+    //   $return = $this->saveSettings();
+    //
+    //   if( is_wp_error( $return ) ) {
+    //
+    //       echo $return->get_error_message();
+    //
+    //   }
+    //
+    // }
+
     if( isset( $_POST[ $this->settings_id . '_save' ] ) ) {
-
-      $return = $this->saveSettings();
-
-      if( is_wp_error( $return ) ) {
-
-          echo $return->get_error_message();
-
-      }
-
-    }
+			do_action( 'wordpressmenu_page_save_' . $this->settings_id );
+		}
 
   }
 
@@ -200,21 +205,27 @@ class MenuPage extends RenderPage {
 
     $this->posted_data = $_POST;
 
+    //var_dump($this->posted_data);
+
     if( empty( $this->settings ) ) {
 
       $this->init_settings();
 
     }
+    error_log("-----------------------------------------------------------------\nBEFORE SETTINGS: " . json_encode($this->settings));
 
     foreach ( $this->fields as $tab => $tab_fields_data ) {
 
       foreach ( $tab_fields_data as $field_name => $field_data ) {
 
+        //$this->settings[ $field_name ] = $this->{ 'validate_' . $field_data['type'] }( $field_name );
         $this->settings[ $field_name ] = $this->{ 'validate_' . $field_data['type'] }( $field_name );
 
       }
 
     }
+
+    error_log("-----------------------------------------------------------------\nAFTER SETTINGS: " . json_encode($this->settings));
 
     $this->updated = update_option( $this->settings_id, $this->settings );
 

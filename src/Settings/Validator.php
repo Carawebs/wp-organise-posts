@@ -96,10 +96,15 @@ trait Validator {
    * @return string
    */
   public function validate_radio( $key ) {
+
     $value = $this->get_option( $key );
+
     if ( isset( $this->posted_data[ $key ] ) ) {
+
       $value = sanitize_text_field( stripslashes( $this->posted_data[ $key ] ) );
+
     }
+
     return $value;
   }
 
@@ -110,39 +115,43 @@ trait Validator {
    */
   public function validate_checkbox( $key ) {
 
-    echo "<h2>Validating Checkbox</h2>";
-    var_dump($key);
+    $value = $this->get_option( $key );
+
+    // If no data has been posted, return the original
+    if( ! isset( $this->posted_data[$key] ) ) {
+
+      return $value;
+
+    }
 
     $status = '';
-    if ( isset( $this->posted_data[ $key ] ) && ( 1 == $this->posted_data[ $key ] ) ) {
+    if ( 0 == $this->posted_data[ $key ] ) {
+      $status = '0';
+    } else if ( 1 == $this->posted_data[ $key ] ) {
       $status = '1';
     }
     return $status;
+
   }
 
   public function validate_cpt_selector( $key ) {
 
-    echo "<h2>Validating CPT Selector</h2>";
-    var_dump($this->posted_data[$key]);
-    error_log($key);
+    $array = $this->get_option( $key );
 
-    if( empty( $this->posted_data[$key] ) ) { return; }
+    // If no data has been posted, return the original
+    if( empty( $this->posted_data[$key] ) ) {
 
-    $array = $this->posted_data[$key];
-
-    error_log("ARRAY: ". json_encode($array));
-
-    foreach( $array as &$item ) {
-
-      error_log($item);
-
-      $item = wp_kses_post( trim( stripslashes( $item ) ) );
-
-      error_log("After filtering: " .$item);
+      return $array;
 
     }
 
-    error_log("FINAL ARRAY: ". json_encode($array));
+    $array = $this->posted_data[$key];
+
+    foreach( $array as &$item ) {
+
+      $item = wp_kses_post( trim( stripslashes( $item ) ) );
+
+    }
 
     return $array;
 

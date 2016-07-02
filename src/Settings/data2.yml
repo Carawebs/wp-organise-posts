@@ -53,23 +53,29 @@ fields:
 -
  tab:  general
  args:
-   type:  cpt_selector
-   name:  CPTs
-   title: Select Post Types
-   desc:  The first line
+   type:    cpt_selector
+   name:    CPTs
+   title:   Select Post Types
+   desc:    The first line
+   default: 0
 -
- tab:  contact
+ tab:  general
  args:
    name:  decider
    title: Decide
    desc:  Make a decision
    type:  checkbox
 -
- tab:  general
- args:
-   name:   town
-   title:  Town
-   desc:   Enter the town
+  tab:  general
+  args:
+    name:  radio_test
+    title: Radio Test
+    desc:  radio radio!
+    type:  radio
+    options:
+      one: First Option
+      two: Second Option
+      third: Third Option
 -
  tab:  more
  args:

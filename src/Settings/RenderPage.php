@@ -129,7 +129,7 @@ class RenderPage extends RenderFields {
 
     }
 
-    // If there are options set but no default, then use the first option as a default value
+    //If there are options set but no default, then use the first option as a default value
     if( ! empty( $field_arguments['options'] ) && $field_arguments['default'] == '' ) {
 
       $options_keys = array_keys( $field_arguments['options'] );
@@ -146,6 +146,8 @@ class RenderPage extends RenderFields {
 
     // The field arguments array, under the specified tab
     $this->fields[ $tab ][ $field_arguments['name'] ] = $field_arguments;
+
+    //var_dump($this->fields);//json_encode( $this->fields));
 
   }
 
