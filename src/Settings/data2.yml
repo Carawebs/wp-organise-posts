@@ -53,15 +53,17 @@ fields:
 -
  tab:  general
  args:
-   name:   address_line_1
-   title:  Main Line One
-   desc:   The first line
+   type:  cpt_selector
+   name:  CPTs
+   title: Select Post Types
+   desc:  The first line
 -
- tab:  general
+ tab:  contact
  args:
-   name:   address_line_2
-   title:  Main Line Two
-   desc:   The second line
+   name:  decider
+   title: Decide
+   desc:  Make a decision
+   type:  checkbox
 -
  tab:  general
  args:

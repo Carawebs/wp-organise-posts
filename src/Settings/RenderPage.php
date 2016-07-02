@@ -41,9 +41,15 @@ class RenderPage extends RenderFields {
 
     ?>
     <div class="wrap">
-      <?php
-      //var_dump($this->fields); ?>
       <h2><?php echo $this->menu_options['page_title'] ?></h2>
+      <?php if( !empty( $this->updated ) && true === $this->updated ) : ?>
+      <div id="message" class="updated below-h2">
+        <!-- <?php //if ( $_GET['msg'] == 'update' ) : ?> -->
+          <p><?php _e( 'Settings saved.' ); ?></p>
+        <!-- <?php //endif; ?> -->
+      </div>
+      <?php endif; ?>
+      <?php var_dump($_POST); ?>
       <?php
       echo ! empty( $this->menu_options['desc'] )
         ? "<p class='description'>{$this->menu_options['desc']}</p>" : NULL;
@@ -80,7 +86,8 @@ class RenderPage extends RenderFields {
       'wpeditor',
       'select',
       'radio',
-      'checkbox'
+      'checkbox',
+      'cpt_selector'
     ];
 
     // If a type is set that is not allowed, don't add the field
@@ -169,7 +176,10 @@ class RenderPage extends RenderFields {
 
         foreach ($this->tabs as $key => $value) {
 
-          echo '<a href="' . admin_url('admin.php?page=' . $this->menu_options['slug'] . '&tab=' . $key ) . '" class="nav-tab ' .  ( ( $key == $active_tab ) ? 'nav-tab-active' : '' ) . ' ">' . $value . '</a>';
+          $admin_url  = admin_url('admin.php?page=' . $this->menu_options['slug'] . '&tab=' . $key );
+          $tab_class   = ( $key == $active_tab ) ? ' nav-tab-active' : NULL;
+          echo "<a href='$admin_url' class='nav-tab$tab_class'>$value</a>";
+
 
         }
       echo '</h2>';

@@ -21,6 +21,9 @@ trait Validator {
    */
   public function validate_text( $key ) {
 
+    echo "<h2>Validating Text</h2>";
+    var_dump($key);
+
     $text  = $this->get_option( $key );
 
     if ( isset( $this->posted_data[ $key ] ) ) {
@@ -107,11 +110,42 @@ trait Validator {
    */
   public function validate_checkbox( $key ) {
 
+    echo "<h2>Validating Checkbox</h2>";
+    var_dump($key);
+
     $status = '';
     if ( isset( $this->posted_data[ $key ] ) && ( 1 == $this->posted_data[ $key ] ) ) {
       $status = '1';
     }
     return $status;
+  }
+
+  public function validate_cpt_selector( $key ) {
+
+    echo "<h2>Validating CPT Selector</h2>";
+    var_dump($this->posted_data[$key]);
+    error_log($key);
+
+    if( empty( $this->posted_data[$key] ) ) { return; }
+
+    $array = $this->posted_data[$key];
+
+    error_log("ARRAY: ". json_encode($array));
+
+    foreach( $array as &$item ) {
+
+      error_log($item);
+
+      $item = wp_kses_post( trim( stripslashes( $item ) ) );
+
+      error_log("After filtering: " .$item);
+
+    }
+
+    error_log("FINAL ARRAY: ". json_encode($array));
+
+    return $array;
+
   }
 
 }

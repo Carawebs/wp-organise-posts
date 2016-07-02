@@ -138,7 +138,41 @@ class RenderFields {
     ob_start();
     ?>
     <input <?php checked( $default, '1', true ); ?> type="<?= $type; ?>" name="<?= $name; ?>" id="<?= $name; ?>" value="1" placeholder="<?= $placeholder; ?>" />
-    <?= $desc;
+    <?php
+    echo ! empty( $desc ) ? "<p class='description'>$desc</p>" : NULL;
+    $fieldSpecific = ob_get_clean();
+    echo $this->genericField( $fieldSpecific, $name, $title );
+
+  }
+
+  /**
+  * Render custom-post-type selector
+  * @param  string $field options
+  * @return string HTML markup for checkbox field
+  */
+  public function render_cpt_selector( $field ) {
+
+    extract( $field );
+    ob_start();
+
+    $post_types = get_post_types( [
+      'show_ui' => true,
+      'show_in_menu' => true,
+      ],
+      'objects' );
+
+    foreach ( $post_types  as $post_type ) {
+
+      if ( $post_type->name == 'attachment' ) continue;
+      $checked = NULL;
+      if ( isset( $default ) && is_array( $default ) ) {
+        $checked = in_array( $post_type->name, $default ) ? "checked='checked'" : NULL;
+      }
+
+    echo "<label><input type='checkbox' name='{$name}[]' value='{$post_type->name}'$checked>&nbsp;$post_type->label</label><br>";
+
+    }
+
     $fieldSpecific = ob_get_clean();
     echo $this->genericField( $fieldSpecific, $name, $title );
 

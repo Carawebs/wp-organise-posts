@@ -216,7 +216,7 @@ class MenuPage extends RenderPage {
 
     }
 
-    update_option( $this->settings_id, $this->settings );
+    $this->updated = update_option( $this->settings_id, $this->settings );
 
   }
 
