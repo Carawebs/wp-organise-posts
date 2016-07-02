@@ -37,9 +37,6 @@ class MenuPage extends RenderPage {
     // If a submenu page has been specified, set `$this->parent_id`
     $this->parent_id = $this->config['default_page_options']['parent'] ?: NULL;
 
-    // Settings object
-    //$this->saveSettings = $saveSettings;
-
     $this->menu_options = $this->config['default_page_options'];
 
     $this->field_args   = $this->config['fields'];
@@ -49,7 +46,9 @@ class MenuPage extends RenderPage {
     $this->prepopulate();
 
     add_action( 'admin_menu', [ $this, 'add_page' ] );
-    add_action( 'wordpressmenu_page_save_' . $this->settings_id, array( $this, 'saveSettings' ) );
+
+    // deprecating this:
+    //add_action( 'wordpressmenu_page_save_' . $this->settings_id, array( $this, 'saveSettings' ) );
     $this->add_tabs();
 
   }
@@ -168,21 +167,21 @@ class MenuPage extends RenderPage {
    */
   protected function saveIfSubmitted() {
 
-    // if( isset( $_POST[ $this->settings_id . '_save' ] ) ) {
-    //
-    //   $return = $this->saveSettings();
-    //
-    //   if( is_wp_error( $return ) ) {
-    //
-    //       echo $return->get_error_message();
-    //
-    //   }
-    //
-    // }
-
     if( isset( $_POST[ $this->settings_id . '_save' ] ) ) {
-			do_action( 'wordpressmenu_page_save_' . $this->settings_id );
-		}
+
+      $return = $this->saveSettings();
+
+      if( is_wp_error( $return ) ) {
+
+          echo $return->get_error_message();
+
+      }
+
+    }
+
+    // if( isset( $_POST[ $this->settings_id . '_save' ] ) ) {
+    //  do_action( 'wordpressmenu_page_save_' . $this->settings_id );
+    // }
 
   }
 
@@ -205,14 +204,11 @@ class MenuPage extends RenderPage {
 
     $this->posted_data = $_POST;
 
-    //var_dump($this->posted_data);
-
     if( empty( $this->settings ) ) {
 
       $this->init_settings();
 
     }
-    error_log("-----------------------------------------------------------------\nBEFORE SETTINGS: " . json_encode($this->settings));
 
     foreach ( $this->fields as $tab => $tab_fields_data ) {
 
@@ -224,8 +220,6 @@ class MenuPage extends RenderPage {
       }
 
     }
-
-    error_log("-----------------------------------------------------------------\nAFTER SETTINGS: " . json_encode($this->settings));
 
     $this->updated = update_option( $this->settings_id, $this->settings );
 
