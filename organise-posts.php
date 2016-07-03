@@ -36,8 +36,8 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Define constants for this plugin
  */
-define( 'CW_ORGANISE_POSTS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-
+define( 'CARAWEBS_ORGANISE_POSTS_PATH', plugin_dir_path( __FILE__ ) );
+define( 'CARAWEBS_ORGANISE_POSTS_SLUG', 'carawebs_organise_posts' );
 
 
 /**
@@ -74,43 +74,37 @@ function autoload() {
 
 function settings() {
 
+  // Menu Page
   $settings = new Settings\MenuPage(
     new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data2.yml' )
-
   );
 
+  // Sub Page
   $settings2 = new Settings\SubMenuPage(
     new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/fromyaml.php' ),
     $settings
-    //new Settings\SaveSettings()
   );
 
 }
 
-// function hooks() {
-//
-//   $settings = new \Carawebs\OrganisePosts\Hooks\Settings();
-//   new \Carawebs\OrganisePosts\Hooks\AddAction( 'wp_head', $settings );
-//
-// }
-
-/**
- * Begins execution of the plugin.
- *
- * @since    1.0.0
- */
 // Nothing more to do on AJAX requests
 ( defined( 'DOING_AJAX' ) && DOING_AJAX ) or add_action( 'wp_loaded', function () {
 
     autoload();
     settings();
 
+    // Kick off WP CLI if using
     if( defined( 'WP_CLI' ) && WP_CLI ) {
       require_once( dirname( __FILE__ ) . '/WPCLI/Convert.php' );
       return;
     }
 
-    // Controller class is responsible to instantiate objects and attach their methods to proper hooks.
+    // Config
+    $config = new Config();
+
+    error_log( $config['address_line_1'] );
+    error_log( json_encode($config['CPTs']) );
+    // Controller class is responsible for instantiating objects and attaching their methods to appropriate hooks.
     $controller = new Controller();
 
     // Setup backend actions

@@ -4,7 +4,7 @@ namespace Carawebs\OrganisePosts;
 
 class Config implements \ArrayAccess {
 
-    const OPTION = 'carawebs-organise-posts';
+    const OPTION = 'carawebs_yaml2';
     const CAP    = 'manage_options';
 
     /**
@@ -35,13 +35,18 @@ class Config implements \ArrayAccess {
      * @param array $liveConfig
      * @param array $defaults
      */
-    public function __construct(array $liveConfig = [], array $defaults = [] ) {
+    public function __construct( array $liveConfig = [], array $defaults = [] ) {
 
-      $stored = get_option(self::OPTION) ?: [];
-      $this->stored = new \ArrayObject(array_merge($defaults, $stored));
-      $liveConfig['capability'] = apply_filters('cookie-policy.config-capability', self::CAP);
+      $stored = get_option( self::OPTION ) ?: [];   // Fetch option from the DB
+      //$this->test = $stored;
+      $this->stored = new \ArrayObject( array_merge( $defaults, $stored ) );
+      $liveConfig['capability'] = apply_filters('carawebs_organise_posts.config-capability', self::CAP );
       $this->live = new \ArrayObject($liveConfig);
 
+    }
+
+    public function tempGetStored() {
+      return $this->live;
     }
 
     /**

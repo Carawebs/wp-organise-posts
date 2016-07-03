@@ -9,7 +9,7 @@ class Config {
   public function __construct( $plugin_slug, $yamlParser, $datafile = NULL ) {
 
     $this->yamlParser   = $yamlParser;
-    $this->datafile     = ! empty( $datafile ) ? CW_ORGANISE_POSTS_PLUGIN_PATH . $datafile : CW_ORGANISE_POSTS_PLUGIN_PATH . 'src/Settings/data.php';
+    $this->datafile     = ! empty( $datafile ) ? CARAWEBS_ORGANISE_POSTS_PATH . $datafile : CARAWEBS_ORGANISE_POSTS_PATH . 'src/Settings/data.php';
     $this->plugin_slug  = $plugin_slug;
     $this->setConfig();
     $this->settings_id  = $this->config['default_page_options']['slug'];
