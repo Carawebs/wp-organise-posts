@@ -1,97 +1,90 @@
 <?php
-
 namespace Carawebs\OrganisePosts\Settings;
 
-class MenuPage extends PluginSettings {
+class MenuPage extends RenderPage {
+
+  use Validator;
+  //use SaveSettings;
+  /**
+  * Settings from database
+  * @var array
+  */
+  protected $settings = [];
 
   protected $action       = 'carawebs-organise-posts-save';
+
   protected $nonce_action = 'carawebs-organise-posts-nonce';
+
   protected $nonce_key    = '_carawebs-organise-posts';
-  // const ERR_KEY      = 'err';
-  // const EDITOR_ID    = 'carawebs-organise-posts';
+
+  protected $settings_id;
 
   /**
-   * Default options
-   * @var array
-   */
-  public $defaultOptions = [
-    'slug'        => '',                        // Name of the menu item
-    'title'       => '',                        // Title displayed on the top of the admin panel
-    'page_title'  => '',                        // Settings Page Title
-    'parent'      => NULL,                      // id of parent, if blank, then this is a top level menu
-    'id'          => '',                        // Unique ID of the menu item
-    'capability'  => 'manage_options',          // User role
-    'icon'        => 'dashicons-admin-generic', // Menu icon for top level menus only http://melchoyce.github.io/dashicons/
-    'position'    => NULL,                      // Menu position. Can be used for both top and sub level menus
-    'desc'        => '',                        // Description displayed below the title
-    'function'    => ''
-  ];
-
-  /**
-   * Gets populated on submenus, contains slug of parent menu
-   * @var null
-   */
+  * Gets populated on submenus, contains slug of parent menu
+  * @var null
+  */
   public $parent_id = NULL;
 
-  /**
-   * Menu options
-   * @var array
-   */
-  public $menu_options = [];
+  //public function __construct ( Config $config, $saveSettings ) {
+  public function __construct ( Config $config ) {
 
-  function __construct( $options, $submenu_page = NULL ) {
-
-    // A slug must be set
-    if( NULL === $options['slug'] ) { return; }
-
-    // Override the default options
-    $this->menu_options = array_merge( $this->defaultOptions, $options );
-
-    // If a submenu page has been specified, set `$this->parent_id`
-    $this->parent_id = $submenu_page;
+    // Config object
+    $this->config       = $config->getConfig();
 
     // Set the unique ID for these settings
-    $this->settings_id = $this->menu_options['slug'];
+    $this->settings_id = $this->config['default_page_options']['slug'];
 
-    // Build some rational defaults based on incomplete/limited inputs
+    // If a submenu page has been specified, set `$this->parent_id`
+    $this->parent_id = $this->config['default_page_options']['parent'] ?: NULL;
+
+    $this->menu_options = $this->config['default_page_options'];
+
+    $this->field_args   = $this->config['fields'];
+
+
+    $this->addFields();
     $this->prepopulate();
 
-    // @TODO Move hooks into a loader class?
-    add_action( 'admin_menu', array( $this, 'add_page' ) );
-    add_action( 'wordpressmenu_page_save_' . $this->settings_id, array( $this, 'save_settings' ) );
+    add_action( 'admin_menu', [ $this, 'add_page' ] );
+
+    // deprecating this:
+    //add_action( 'wordpressmenu_page_save_' . $this->settings_id, array( $this, 'saveSettings' ) );
+    $this->add_tabs();
 
   }
 
   /**
-   * Populate some of required options
-   *
-   * If no 'title' is provided, use the slug to construct one. If no 'page_title' is provided,
-   * use the 'title' to construct one. If no 'function' provided, set default.
-   *
-   * @return void
-   */
+  * Populate some of required options
+  *
+  * If no 'title' is provided, use the slug to construct one. If no 'page_title' is provided,
+  * use the 'title' to construct one. If no 'function' provided, set default.
+  *
+  * @return void
+  */
   public function prepopulate() {
 
-    $this->menu_options['title'] = $this->menu_options['title']
-      ?: ucfirst( $this->menu_options['slug'] );
+    $this->menu_options['title'] = ! empty( $this->menu_options['title'] )
+    ? $this->menu_options['title'] : ucfirst( $this->menu_options['slug'] );
 
-    $this->menu_options['page_title'] = $this->menu_options['page_title']
-      ?: $this->menu_options['page_title'] = $this->menu_options['title'];
+    $this->menu_options['page_title'] = ! empty( $this->menu_options['page_title'] )
+    ? $this->menu_options['page_title'] : $this->menu_options['page_title'] = $this->menu_options['title'];
 
-    $this->menu_options['function'] = $this->menu_options['function']
-      ?: 'create_menu_page';
+    $this->menu_options['function'] = ! empty( $this->menu_options['function'] )
+    ? $this->menu_options['function'] : 'create_menu_page';
 
   }
 
   /**
-   * Add the menu page
-   *
-   * `$this->menu_options` are based on rational defaults, overridden by arguments
-   * passed in by the client code.
-   *
-   * @return void
-   */
+  * Add the menu page
+  *
+  * `$this->menu_options` are based on rational defaults, overridden by arguments
+  * passed in by the client code.
+  *
+  * @return void
+  */
   public function add_page() {
+
+    $menu_options = $this->config['default_page_options'];
 
     if( $this->parent_id != NULL ) {
 
@@ -120,113 +113,157 @@ class MenuPage extends PluginSettings {
 
   }
 
-  /**
-   * Create the menu page
-   * @return void
-   */
-  public function create_menu_page() {
+  public function addFields() {
 
-    $this->save_if_submit();
+    foreach( $this->field_args as $field ) {
 
-    // The default tab is 'general'
-    // @TODO: set the default tab as a property for better "Single Responsibility"
-    $tab = 'general';
-
-    // If on a tabbed page, set the tab accordingly
-    if( isset( $_GET['tab'] ) ) {
-
-      $tab = $_GET['tab'];
-
-    }
-
-    $this->init_settings();
-
-    ?>
-    <div class="wrap">
-      <h2><?php echo $this->menu_options['page_title'] ?></h2>
-      <?php
-
-      // -----------------------------------------------------------------------
-      // DEBUG - dump fields
-      // var_dump($_SESSION['fields']);
-      // var_dump( $_SESSION['saved']);
-      // var_dump( $_POST );
-      // -----------------------------------------------------------------------
-        if ( ! empty( $this->menu_options['desc'] ) ) {
-          ?><p class='description'><?php echo $this->menu_options['desc'] ?></p><?php
-        }
-        $this->render_tabs( $tab );
-      ?>
-      <form method="POST" action="">
-        <div class="postbox">
-          <div class="inside">
-            <table class="form-table">
-              <?php $this->render_fields( $tab ); ?>
-            </table>
-            <?php $this->save_button(); ?>
-          </div>
-        </div>
-      </form>
-    </div>
-    <?php
-  }
-
-  /**
-   * Render the registered tabs
-   * @param  string $active_tab the viewed tab
-   * @return void
-   */
-  public function render_tabs( $active_tab = 'general' ) {
-
-    if( count( $this->tabs ) > 1 ) {
-
-      echo '<h2 class="nav-tab-wrapper woo-nav-tab-wrapper">';
-
-        foreach ($this->tabs as $key => $value) {
-
-          echo '<a href="' . admin_url('admin.php?page=' . $this->menu_options['slug'] . '&tab=' . $key ) . '" class="nav-tab ' .  ( ( $key == $active_tab ) ? 'nav-tab-active' : '' ) . ' ">' . $value . '</a>';
-
-        }
-      echo '</h2>';
-      echo '<br/>';
+      $this->add_field( $field['tab'], $field['args'] );
 
     }
 
   }
 
   /**
-   * Render the save button
-   * @return void
-   */
-  protected function save_button() {
+  * Add tab
+  * @param array $array options array with tab slug and title
+  */
+  public function add_tabs() {
 
-    ?>
-    <button type="submit" name="<?= $this->settings_id; ?>_save" class="button button-primary">
-      <?php _e( 'Save', 'organise-posts' ); ?>
-    </button>
-    <?php
+    foreach( $this->config['tabs'] as $tab ) {
+
+      $this->tabs[ $tab['slug'] ] = $tab['title'];
+
+    }
 
   }
 
   /**
-   * Save if the button for this menu is submitted
+  * Get the settings from the database
+  * @return void
+  */
+  public function init_settings() {
+
+    $this->settings = (array) get_option( $this->settings_id );
+
+    foreach ( $this->fields as $tab_key => $tab ) {
+
+      foreach ( $tab as $name => $field ) {
+
+        if( isset( $this->settings[ $name ] ) ) {
+
+          $this->fields[ $tab_key ][ $name ]['default'] = $this->settings[ $name ];
+
+        }
+
+      }
+
+    }
+
+  }
+
+  /**
+   * Trigger the saveSettings method if the button for this menu is submitted
    * @return void
    */
-  protected function save_if_submit() {
+  protected function saveIfSubmitted() {
 
     if( isset( $_POST[ $this->settings_id . '_save' ] ) ) {
 
-      $return = $this->save_settings();
+      $return = $this->saveSettings();
 
       if( is_wp_error( $return ) ) {
 
           echo $return->get_error_message();
-          
+
       }
 
-      //do_action( 'wordpressmenu_page_save_' . $this->settings_id );
+    }
+
+    // if( isset( $_POST[ $this->settings_id . '_save' ] ) ) {
+    //  do_action( 'wordpressmenu_page_save_' . $this->settings_id );
+    // }
+
+  }
+
+  /**
+  * Save settings from `$_POST` array on form submission
+  *
+  * Runs a nonce check, validates each field value, builds an array of validated values
+  * and updates the option in the database.
+  *
+  * @uses `update_option()`
+  * @return void
+  */
+  public function saveSettings() {
+
+    if ( ! wp_verify_nonce( $_POST[$this->nonce_key], $this->nonce_action ) ) {
+
+      return new \WP_Error(__CLASS__, 'Invalid data.');
 
     }
+
+    $this->posted_data = $_POST;
+
+    if( empty( $this->settings ) ) {
+
+      $this->init_settings();
+
+    }
+
+    foreach ( $this->fields as $tab => $tab_fields_data ) {
+
+      foreach ( $tab_fields_data as $field_name => $field_data ) {
+
+        //$this->settings[ $field_name ] = $this->{ 'validate_' . $field_data['type'] }( $field_name );
+        $this->settings[ $field_name ] = $this->{ 'validate_' . $field_data['type'] }( $field_name );
+
+      }
+
+    }
+
+    $this->updated = update_option( $this->settings_id, $this->settings );
+
+  }
+
+  /**
+  * Gets an option from the settings API, using defaults if necessary to prevent undefined notices.
+  *
+  * @param  string $key
+  * @param  mixed  $empty_value
+  * @return mixed  The value specified for the option or a default value for the option.
+  */
+  public function get_option( $key, $empty_value = NULL ) {
+
+    if ( empty( $this->settings ) ) {
+
+      $this->init_settings();
+
+    }
+
+    // Get option default if unset.
+    if ( ! isset( $this->settings[ $key ] ) ) {
+
+      $form_fields = $this->fields;
+
+      foreach ( $this->tabs as $tab_key => $tab_title ) {
+
+        if( isset( $form_fields[ $tab_key ][ $key ] ) ) {
+
+          $this->settings[ $key ] = isset( $form_fields[ $tab_key ][ $key ]['default'] ) ? $form_fields[ $tab_key ][ $key ]['default'] : '';
+
+        }
+
+      }
+
+    }
+
+    if ( ! is_null( $empty_value ) && empty( $this->settings[ $key ] ) && '' === $this->settings[ $key ] ) {
+
+      $this->settings[ $key ] = $empty_value;
+
+    }
+
+    return $this->settings[ $key ];
 
   }
 

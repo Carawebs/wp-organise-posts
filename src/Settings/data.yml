@@ -1,0 +1,101 @@
+# Menu Page Options
+# ------------------------------------------------------------------------------
+default_page_options:
+
+  # Name of the menu item and the options table key
+  slug: carawebs_yaml_organise_posts
+
+  # Title displayed on the top of the admin panel
+  title: YAML Organise
+
+  # Settings page title
+  page_title:  YAML Organise Posts
+
+  # slug of parent page   if NULL then this is a top level menu
+  # Options:
+  # options general.php  Sub Page under Settings menu item
+  # tools.php            Sub page under Tools menu item
+  parent:       NULL #options-general.php
+
+  # Unique ID of the menu item
+  id:           NULL
+
+  # User role necessary to access the settings page
+  capability:   manage_options
+
+  # Icon URL | Dashicons helper class | none | base64 encoded SVG using a data URI
+  icon:         dashicons-format-gallery
+
+  # position in the menu order this menu item will appear
+  position:     89
+
+  # Description displayed below the title
+  desc:         This is the description
+
+# Set up tabs
+# ------------------------------------------------------------------------------
+tabs:
+  general:
+    slug:  general
+    title:  General Settings
+
+  contact:
+    slug:  contact
+    title:  Email Settings
+
+  more:
+    slug:   more
+    title:  More Settings
+
+# Set up fields
+# ------------------------------------------------------------------------------
+fields:
+-
+ tab:  general
+ args:
+   name:  textarea_content
+   title: Text Content
+   desc:  The first line
+   type:  textarea
+-
+ tab:  general
+ args:
+   name:  address_line_2
+   title: Address Line Two
+   desc:  The second line
+   type:  select
+   options:
+     one: First Option
+     two: Second Option
+     third: Third Option
+-
+ tab:  general
+ args:
+   name:  main_content
+   title: Some Content
+   desc:  add some wysiwyg magic!
+   type:  wpeditor
+-
+  tab:  general
+  args:
+    name:  radio_test
+    title: Radio Test
+    desc:  radio radio!
+    type:  radio
+    options:
+      one: First Option
+      two: Second Option
+      third: Third Option
+-
+ tab:  contact
+ args:
+   name:   town
+   title:  Town
+   desc:   Enter the town
+-
+ tab:  more
+ args:
+   name:  more
+   title: More stuff
+   desc:  MOre The second line
+   type:  checkbox

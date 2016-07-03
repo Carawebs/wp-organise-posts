@@ -1,0 +1,85 @@
+# Menu Page Options
+# ------------------------------------------------------------------------------
+default_page_options:
+
+  # Name of the menu item and the options table key
+  slug: carawebs_yaml2
+
+  # Title displayed on the top of the admin panel
+  title: Boilerplate
+
+  # Settings page title
+  page_title:  Boilerplate
+
+  # slug of parent page   if NULL then this is a top level menu
+  # Options:
+  # options general.php  Sub Page under Settings menu item
+  # tools.php            Sub page under Tools menu item
+  parent:       NULL #options-general.php
+
+  # Unique ID of the menu item
+  id:           NULL
+
+  # User role necessary to access the settings page
+  capability:   manage_options
+
+  # Icon URL | Dashicons helper class | none | base64 encoded SVG using a data URI
+  icon:         dashicons-admin-settings
+
+  # position in the menu order this menu item will appear
+  position:     89
+
+  # Description displayed below the title
+  desc:         This is the description
+
+# Set up tabs
+# ------------------------------------------------------------------------------
+tabs:
+  general:
+    slug:  general
+    title:  Main
+
+  contact:
+    slug:  contact
+    title:  Email Settings
+
+  more:
+    slug:   more
+    title:  More Settings
+
+# Set up fields
+# ------------------------------------------------------------------------------
+fields:
+-
+ tab:  general
+ args:
+   type:    cpt_selector
+   name:    CPTs
+   title:   Select Post Types
+   desc:    The first line
+   default: 0
+-
+ tab:  general
+ args:
+   name:  decider
+   title: Decide
+   desc:  Make a decision
+   type:  checkbox
+-
+  tab:  general
+  args:
+    name:  radio_test
+    title: Radio Test
+    desc:  radio radio!
+    type:  radio
+    options:
+      one: First Option
+      two: Second Option
+      third: Third Option
+-
+ tab:  more
+ args:
+   name:  more
+   title: More stuff
+   desc:  MOre The second line
+   type:  checkbox

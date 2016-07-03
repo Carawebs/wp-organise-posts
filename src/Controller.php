@@ -39,10 +39,7 @@ class Controller
   * @param \Carawebs\OrganisePosts\SettingsPage|null      $settings
   * @param \Carawebs\OrganisePosts\RendererInterface|null $renderer
   */
-  public function setupBackendActions(
-    Config $config,
-    SettingsPage $settings = null,
-    RendererInterface $renderer = null ) {
+  public function setupBackendActions( Config $config ) {
 
     if (! $this->isAdmin) {
       return;
@@ -51,23 +48,23 @@ class Controller
     $this->loadTextDomain();
 
     // Setup settings page
-    add_action('admin_menu', function () use ( $config, $settings, $renderer ) {
-
-      $renderer or $renderer = new SimpleRenderer();
-      $settings or $settings = new SettingsPage($config, $renderer);
-      $settings->setup();
-
-    });
-
-    // Save setting page form when submitted
-    add_action('admin_post_'.SettingsPage::ACTION, function () use ( $config, $settings, $renderer ) {
-
-      $renderer or $renderer = new SimpleRenderer();
-      $settings or $settings = new SettingsPage($config, $renderer);
-      $settings->save();
-      exit();
-
-    });
+    // add_action('admin_menu', function () use ( $config, $settings, $renderer ) {
+    //
+    //   $renderer or $renderer = new SimpleRenderer();
+    //   $settings or $settings = new SettingsPage($config, $renderer);
+    //   $settings->setup();
+    //
+    // });
+    //
+    // // Save setting page form when submitted
+    // add_action('admin_post_'.SettingsPage::ACTION, function () use ( $config, $settings, $renderer ) {
+    //
+    //   $renderer or $renderer = new SimpleRenderer();
+    //   $settings or $settings = new SettingsPage($config, $renderer);
+    //   $settings->save();
+    //   exit();
+    //
+    // });
 
   }
 
