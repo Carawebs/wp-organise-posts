@@ -29,6 +29,8 @@ class Controller
 
     $this->isAdmin = is_admin();
 
+    error_log( "From controller: " . json_encode($config['CPTs']) );
+
   }
 
   /**

@@ -105,7 +105,7 @@ function settings() {
     error_log( $config['address_line_1'] );
     error_log( json_encode($config['CPTs']) );
     // Controller class is responsible for instantiating objects and attaching their methods to appropriate hooks.
-    $controller = new Controller();
+    $controller = new Controller( $config );
 
     // Setup backend actions
     //$controller->setupBackendActions($config);
