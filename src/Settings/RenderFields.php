@@ -135,7 +135,7 @@ class RenderFields {
   * @return string HTML markup for checkbox field
   */
   public function render_checkbox( $field ) {
-    error_log( json_encode($field));
+    //error_log( json_encode($field));
 
     extract( $field );
     ob_start();
@@ -156,7 +156,7 @@ class RenderFields {
   */
   public function render_cpt_selector( $field ) {
 
-    error_log( "FIELD: " . json_encode($field) );
+    //error_log( "FIELD: " . json_encode($field) );
 
     extract( $field );
     ob_start();

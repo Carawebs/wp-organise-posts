@@ -76,7 +76,7 @@ function settings() {
 
   $settings = new Settings\MenuPage(
     new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data2.yml' )
-    
+
   );
 
   $settings2 = new Settings\SubMenuPage(
@@ -93,13 +93,14 @@ function settings() {
 //   new \Carawebs\OrganisePosts\Hooks\AddAction( 'wp_head', $settings );
 //
 // }
+
 /**
  * Begins execution of the plugin.
  *
  * @since    1.0.0
  */
 // Nothing more to do on AJAX requests
-( defined('DOING_AJAX') && DOING_AJAX) or add_action( 'wp_loaded', function () {
+( defined( 'DOING_AJAX' ) && DOING_AJAX ) or add_action( 'wp_loaded', function () {
 
     autoload();
     settings();
@@ -119,3 +120,9 @@ function settings() {
     //$controller->setupFrontendActions($config);
 
 });
+
+require_once( __DIR__."/src/Activator.php" ); // NB: no autoloader at this point!
+register_activation_hook( __FILE__, [ new Activator(), 'activate' ] );
+
+require_once( __DIR__."/src/Deactivator.php" );
+register_deactivation_hook( __FILE__, [ new Deactivator(), 'deactivate' ] );

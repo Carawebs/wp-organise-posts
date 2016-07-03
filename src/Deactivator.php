@@ -24,15 +24,17 @@ namespace Carawebs\OrganisePosts;
  */
 class Deactivator {
 
-	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
-	 */
-	public static function deactivate() {
+  /**
+   * Short Description. (use period)
+   *
+   * Long Description.
+   *
+   * @since    1.0.0
+   */
+  public function deactivate() {
 
-	}
+    error_log( "DEACTIVATED, from the " . get_class(). " CLASS, yeah!!!!!!");
+
+  }
 
 }

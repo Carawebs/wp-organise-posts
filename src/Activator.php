@@ -31,7 +31,9 @@ class Activator {
  *
  * @since    1.0.0
  */
- public static function activate() {
+ public function activate() {
+
+   error_log( "ACTIVATED, from the  " . get_class(). " CLASS, yeah!!!!!!");
 
  }
 

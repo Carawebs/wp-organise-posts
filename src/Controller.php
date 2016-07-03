@@ -47,25 +47,6 @@ class Controller
 
     $this->loadTextDomain();
 
-    // Setup settings page
-    // add_action('admin_menu', function () use ( $config, $settings, $renderer ) {
-    //
-    //   $renderer or $renderer = new SimpleRenderer();
-    //   $settings or $settings = new SettingsPage($config, $renderer);
-    //   $settings->setup();
-    //
-    // });
-    //
-    // // Save setting page form when submitted
-    // add_action('admin_post_'.SettingsPage::ACTION, function () use ( $config, $settings, $renderer ) {
-    //
-    //   $renderer or $renderer = new SimpleRenderer();
-    //   $settings or $settings = new SettingsPage($config, $renderer);
-    //   $settings->save();
-    //   exit();
-    //
-    // });
-
   }
 
   /**
@@ -73,8 +54,8 @@ class Controller
   */
   private function loadTextDomain() {
     // Load text domain
-    $pathArr = explode(DIRECTORY_SEPARATOR, dirname(__DIR__));
-    load_plugin_textdomain('organise-posts', false, end($pathArr).'/lang');
+    $pathArr = explode( DIRECTORY_SEPARATOR, dirname(__DIR__) );
+    load_plugin_textdomain( 'organise-posts', false, end($pathArr).'/lang' );
 
   }
 
