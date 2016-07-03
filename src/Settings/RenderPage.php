@@ -41,17 +41,13 @@ class RenderPage extends RenderFields {
 
     ?>
     <div class="wrap">
-      <h2><?php echo $this->menu_options['page_title'] ?></h2>
-      <?php if( !empty( $this->updated ) && true === $this->updated ) : ?>
+      <h2><?= $this->menu_options['page_title'] ?></h2>
+      <?php if( ! empty( $this->updated ) && true === $this->updated ) : ?>
       <div id="message" class="updated below-h2">
-        <!-- <?php //if ( $_GET['msg'] == 'update' ) : ?> -->
-          <p><?php _e( 'Settings saved.' ); ?></p>
-        <!-- <?php //endif; ?> -->
+        <p><?php _e( 'Settings saved.' ); ?></p>
       </div>
       <?php endif; ?>
-      <?php var_dump($_POST); ?>
-      <?php
-      echo ! empty( $this->menu_options['desc'] )
+      <?= ! empty( $this->menu_options['desc'] )
         ? "<p class='description'>{$this->menu_options['desc']}</p>" : NULL;
       $this->render_tabs( $tab );
       ?>

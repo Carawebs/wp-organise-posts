@@ -6,10 +6,10 @@ default_page_options:
   slug: carawebs_yaml2
 
   # Title displayed on the top of the admin panel
-  title: YAML2
+  title: Boilerplate
 
   # Settings page title
-  page_title:  YAML2 Organise Posts
+  page_title:  Boilerplate
 
   # slug of parent page   if NULL then this is a top level menu
   # Options:
