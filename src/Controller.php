@@ -29,7 +29,7 @@ class Controller
 
     $this->isAdmin = is_admin();
 
-    error_log( "From controller: " . json_encode($config['CPTs']) );
+    //error_log( "From controller: " . json_encode($config['CPTs']) );
 
   }
 
@@ -44,10 +44,28 @@ class Controller
   public function setupBackendActions( Config $config ) {
 
     if (! $this->isAdmin) {
+
       return;
+
     }
 
+    $backend = new Backend();
+
     $this->loadTextDomain();
+
+    // add_action( 'load-edit.php', function() {
+    //   echo "<script>alert('load-edit.php hook')</script>";
+    // } );
+
+    add_action( 'load-edit.php', [ $backend, 'load_edit_screen'] );
+    //add_action( 'wp_ajax_simple_page_ordering', [ $backend, 'ajax_simple_page_ordering'] );
+    add_action( 'wp_ajax_simple_page_ordering', [ $backend, 'ajax_simple_page_ordering'] );
+
+    // add_action( 'wp_ajax_simple_page_ordering', function() {
+    //
+    //   return "HELLO";
+    //
+    // } );
 
   }
 

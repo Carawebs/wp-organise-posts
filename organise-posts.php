@@ -37,6 +37,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Define constants for this plugin
  */
 define( 'CARAWEBS_ORGANISE_POSTS_PATH', plugin_dir_path( __FILE__ ) );
+define( 'CARAWEBS_ORGANISE_POSTS_BASE_URL', plugins_url( NULL, __FILE__ ) );
 define( 'CARAWEBS_ORGANISE_POSTS_SLUG', 'carawebs_organise_posts' );
 
 
@@ -88,7 +89,8 @@ function settings() {
 }
 
 // Nothing more to do on AJAX requests
-( defined( 'DOING_AJAX' ) && DOING_AJAX ) or add_action( 'wp_loaded', function () {
+//( defined( 'DOING_AJAX' ) && DOING_AJAX ) or add_action( 'wp_loaded', function () {
+add_action( 'wp_loaded', function () {
 
     autoload();
     settings();
@@ -102,13 +104,14 @@ function settings() {
     // Config
     $config = new Config();
 
-    error_log( $config['address_line_1'] );
-    error_log( json_encode($config['CPTs']) );
+    //error_log( $config['address_line_1'] );
+    //error_log( json_encode($config['CPTs']) );
+    
     // Controller class is responsible for instantiating objects and attaching their methods to appropriate hooks.
     $controller = new Controller( $config );
 
     // Setup backend actions
-    //$controller->setupBackendActions($config);
+    $controller->setupBackendActions($config);
 
     // Setup frontend action
     //$controller->setupFrontendActions($config);
