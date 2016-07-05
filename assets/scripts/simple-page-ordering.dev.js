@@ -1,5 +1,7 @@
 function update_simple_ordering_callback(response) {
 
+  console.log( response );
+
   if ( 'children' === response ) {
     window.location.reload();
     return;
@@ -52,7 +54,7 @@ function update_simple_ordering_callback(response) {
   if ( changes.next ) {
 
     jQuery.post( ajaxurl, {
-      action: 'simple_page_ordering',
+      action: 'organise_posts_cpt_screen',
       id: changes.next['id'],
       previd: changes.next['previd'],
       nextid: changes.next['nextid'],
@@ -126,7 +128,7 @@ sortable_post_table.sortable({
 
     // go do the sorting stuff via ajax
     jQuery.post( ajaxurl, {
-      action: 'simple_page_ordering',
+      action: 'organise_posts_cpt_screen',
       id: postid,
       previd: prevpostid,
       nextid: nextpostid

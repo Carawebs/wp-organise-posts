@@ -106,7 +106,7 @@ add_action( 'wp_loaded', function () {
 
     //error_log( $config['address_line_1'] );
     //error_log( json_encode($config['CPTs']) );
-    
+
     // Controller class is responsible for instantiating objects and attaching their methods to appropriate hooks.
     $controller = new Controller( $config );
 
@@ -114,7 +114,7 @@ add_action( 'wp_loaded', function () {
     $controller->setupBackendActions($config);
 
     // Setup frontend action
-    //$controller->setupFrontendActions($config);
+    $controller->setupFrontendActions($config);
 
 });
 

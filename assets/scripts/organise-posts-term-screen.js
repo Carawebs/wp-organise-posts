@@ -1,4 +1,7 @@
 function update_simple_ordering_callback(response) {
+  alert(response);
+
+  console.log( response );
 
   if ( 'children' === response ) {
     window.location.reload();
@@ -18,7 +21,9 @@ function update_simple_ordering_callback(response) {
     if ( null !== inline_key && new_pos.hasOwnProperty(key) ) {
       var dom_menu_order = inline_key.querySelector('.menu_order');
 
-      if ( undefined !== new_pos[key]['menucpts[key]['menu_order'];
+      if ( undefined !== new_pos[key]['menu_order'] ) {
+        if ( null !== dom_menu_order ) {
+          dom_menu_order.innerHTML = new_pos[key]['menu_order'];
         }
 
         var dom_post_parent = inline_key.querySelector('.post_parent');
@@ -124,7 +129,7 @@ sortable_post_table.sortable({
 
     // go do the sorting stuff via ajax
     jQuery.post( ajaxurl, {
-      action: 'simple_page_ordering',
+      action: 'organise_posts_term_screen',
       id: postid,
       previd: prevpostid,
       nextid: nextpostid
