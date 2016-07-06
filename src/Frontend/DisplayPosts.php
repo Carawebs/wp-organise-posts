@@ -49,7 +49,7 @@ class DisplayPosts {
 
       $query->set( 'meta_query', array(
         'relation' => 'OR',
-          array( 'key' => $key, 'compare' => 'EXISTS' ),
+          array( 'key' => $key, 'compare' => 'EXISTS', 'type' => 'NUMERIC' ),
           array( 'key' => $key, 'compare' => 'NOT EXISTS' )
       ) );
       $query->set( 'orderby', [ $key => 'ASC', 'menu_order' => 'ASC' ] );

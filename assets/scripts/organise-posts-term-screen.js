@@ -1,5 +1,4 @@
 function update_simple_ordering_callback(response) {
-  alert(response);
 
   console.log( response );
 
@@ -11,6 +10,8 @@ function update_simple_ordering_callback(response) {
   // Object returned from the PHP script
   var changes = jQuery.parseJSON( response );
 
+  console.log(changes);
+  console.log(changes.new_pos);
   var new_pos = changes.new_pos;
   for ( var key in new_pos ) {
     if ( 'next' === key ) {
@@ -55,11 +56,12 @@ function update_simple_ordering_callback(response) {
   if ( changes.next ) {
 
     jQuery.post( ajaxurl, {
-      action: 'organise_posts_term_screen',
-      id: changes.next['id'],
-      previd: changes.next['previd'],
-      nextid: changes.next['nextid'],
-      start: changes.next['start'],
+      action:   'organise_posts_term_screen',
+      id:       changes.next['id'],
+      term:     carawebs_organise_posts.current_term,
+      previd:   changes.next['previd'],
+      nextid:   changes.next['nextid'],
+      start:    changes.next['start'],
       excluded: changes.next['excluded']
     }, update_simple_ordering_callback );
 
@@ -130,7 +132,8 @@ sortable_post_table.sortable({
     // go do the sorting stuff via ajax
     jQuery.post( ajaxurl, {
       action: 'organise_posts_term_screen',
-      id: postid,
+      term:   carawebs_organise_posts.current_term,
+      id:     postid,
       previd: prevpostid,
       nextid: nextpostid
     }, update_simple_ordering_callback );

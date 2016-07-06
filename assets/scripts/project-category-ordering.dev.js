@@ -1,5 +1,7 @@
 function update_simple_ordering_callback(response) {
 
+  alert(response);
+
   if ( 'children' === response ) {
     window.location.reload();
     return;

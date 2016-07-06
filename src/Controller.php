@@ -114,14 +114,16 @@ class Controller {
 
     } else if( in_array( 'project-category', $custom_tax_screen ) ) {
 
-      //$termScreen->set_term( $current_term );
+      $termScreen->set_term( $current_term );
 
+      add_filter( 'manage_project_posts_custom_column', [ $termScreen, 'term_columns' ]) ;
+      add_action( 'manage_project_posts_columns', [ $termScreen, 'add_new_project_column' ]);
       add_action( 'pre_get_posts',        [ $termScreen, 'custom_order' ] );
       add_filter( 'views_' . $screen->id, [ $termScreen, 'sort_by_order_link' ] );  // add view by menu order to views
       add_action( 'wp',                   [ $termScreen, 'wp' ] );
       add_action( 'admin_head',           [ $termScreen, 'admin_head' ] );
 
-      var_dump( $termScreen );
+      //var_dump( $termScreen );
 
     }
 
