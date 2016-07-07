@@ -32,6 +32,7 @@ class Controller {
 
     $this->config = $config;
     $this->isAdmin = is_admin();
+    $this->target_post_types = ['people', 'project'];
 
   }
 
@@ -81,7 +82,6 @@ class Controller {
 
     // Determine post type from the screen object
     $screen = get_current_screen();
-    error_log( json_encode( $screen ) );
 
     $current_term = isset( $_GET['project-category'] ) ? $_GET['project-category'] : NULL;
     $post_type = $screen->post_type;
@@ -97,18 +97,17 @@ class Controller {
       return;
     }
 
-    // Is this an excluded edit screen?
+    // Is this a filtered term edit screen?
+    // Screens of this type have the $_GET: `/edit.php?post_type=project&project-category=commercial`
     // The strings in this array are checked against $_GET elements on this screen
-    $taxonomies = get_taxonomies();
-    $excluded_screens = [ 'project-category', 'category_name', 'tag' ];
+    // @TODO $taxonomies = get_taxonomies(); --- get all taxonomies, tidy them up and add them to the array of term filter pages.
+    $term_screens_identifiers = [ 'project-category', 'category_name', 'tag' ];
 
-    $custom_tax_screen = array_filter( $excluded_screens, function ( $excluded_screen ) {
+    $custom_tax_screen = array_filter( $term_screens_identifiers, function ( $term_identifier ) {
 
-      return isset( $_GET[$excluded_screen] );
+      return isset( $_GET[$term_identifier] );
 
     });
-
-    error_log( var_export($taxonomies, true) );
 
     if( empty( $custom_tax_screen ) ) {
 
@@ -121,7 +120,7 @@ class Controller {
       $cpt_actions = [
         'manage_project_posts_columns'        => 'add_menu_order_column',
         'manage_project_posts_custom_column'  => 'show_menu_order_column',
-        'wp_ajax_simple_page_ordering'        => 'ajax_organise_posts_ordering',
+        'wp_ajax_simple_page_ordering'        => 'ajax_organise_posts_ordering',// @TODO DEPRECATED - CHECK AND REMOVE
         'wp'                                  => 'wp',
         'admin_head'                          => 'admin_head'
       ];
@@ -129,6 +128,9 @@ class Controller {
         'manage_edit-project_sortable_columns'=> 'sortable_menu_order_column',
         'views_' . $screen->id                => 'sort_by_order_link'
       ];
+
+      // $this->load_actions( $screenContext, $cpt_actions );
+      // $this->load_filters( $screenContext, $cpt_filters );
 
     } else if( in_array( 'project-category', $custom_tax_screen ) ) {
 
@@ -146,6 +148,9 @@ class Controller {
         'manage_project_posts_custom_column'  => 'term_columns',
         'views_' . $screen->id                => 'sort_by_order_link'
       ];
+
+      add_action('manage_project_posts_columns', [ $screenContext, 'add_menu_order_column']);
+      add_action( 'manage_project_posts_custom_column', [ $screenContext,'show_menu_order_column']);
 
     } else {
 

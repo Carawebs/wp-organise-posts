@@ -14,6 +14,8 @@ class CPTScreen extends Screen {
 
     $orderby = get_query_var('orderby');
 
+    //var_dump($orderby);
+
     if ( ( is_string( $orderby ) && 0 === strpos( $orderby, 'menu_order' ) ) || ( isset( $orderby['menu_order'] ) && $orderby['menu_order'] == 'ASC' ) ) {
 
       $script_name = '/assets/scripts/simple-page-ordering.dev.js';
@@ -40,26 +42,26 @@ class CPTScreen extends Screen {
 
   }
 
-  function custom_taxonomy_nav() {
-
-    global $typenow;
-    global $wp_query;
-
-    if ($typenow=='listing') {
-      $taxonomy = 'project-category';
-      $current_taxonomy = get_taxonomy($taxonomy);
-      wp_dropdown_categories(array(
-        'show_option_all' =>  __("Show All {$current_taxonomy->label}"),
-        'taxonomy'        =>  $taxonomy,
-        'name'            =>  'business',
-        'orderby'         =>  'name',
-        'selected'        =>  $wp_query->query['term'],
-        'hierarchical'    =>  true,
-        'depth'           =>  3,
-        'show_count'      =>  true, // Show # listings in parens
-        'hide_empty'      =>  true, // Don't show businesses w/o listings
-      ));
-    }
-  }
+  // function custom_taxonomy_nav() {
+  //
+  //   global $typenow;
+  //   global $wp_query;
+  //
+  //   if ($typenow=='listing') {
+  //     $taxonomy = 'project-category';
+  //     $current_taxonomy = get_taxonomy($taxonomy);
+  //     wp_dropdown_categories(array(
+  //       'show_option_all' =>  __("Show All {$current_taxonomy->label}"),
+  //       'taxonomy'        =>  $taxonomy,
+  //       'name'            =>  'business',
+  //       'orderby'         =>  'name',
+  //       'selected'        =>  $wp_query->query['term'],
+  //       'hierarchical'    =>  true,
+  //       'depth'           =>  3,
+  //       'show_count'      =>  true, // Show # listings in parens
+  //       'hide_empty'      =>  true, // Don't show businesses w/o listings
+  //     ));
+  //   }
+  // }
 
 }

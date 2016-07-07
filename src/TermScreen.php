@@ -73,15 +73,11 @@ class TermScreen extends Screen {
    */
   public function custom_order ( $query ) {
 
-    // Get the term that is being displayed for the given custom taxonomy
-    //$current_term = $query->query['project-category'];
-
     // Standardised key for post meta
     $key = $this->term_postmeta_key;
 
     $query->set( 'meta_query', [
       'relation' => 'OR',
-        //[ 'key' => $key, 'compare' => 'EXISTS' ],
         [ 'key' => $key, 'type' => 'NUMERIC' ],
         [ 'key' => $key, 'compare' => 'NOT EXISTS' ]
      ]);

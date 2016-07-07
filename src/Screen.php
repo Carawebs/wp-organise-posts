@@ -36,139 +36,139 @@ abstract class Screen {
 
     $screen = get_current_screen();
     $screen->add_help_tab(
-    [
-      'id' => $args['id'],
-      'title' => $args['title'],
-      'content' => $args['content'],
-    ]
-  );
+      [
+        'id' => $args['id'],
+        'title' => $args['title'],
+        'content' => $args['content'],
+      ]
+    );
 
-}
-
-/**
-* Checks to see if the current user has the capability to "edit others" for a post type
-*
-* @param string $post_type Post type name
-* @return bool True or false
-*/
-protected function check_edit_others_caps( $post_type ) {
-
-  $post_type_object = get_post_type_object( $post_type );
-  $edit_others_cap = empty( $post_type_object ) ? 'edit_others_' . $post_type . 's' : $post_type_object->cap->edit_others_posts;
-  return apply_filters( 'simple_page_ordering_edit_rights', current_user_can( $edit_others_cap ), $post_type );
-
-}
-
-/**
-* The sorting logic
-*
-* Receives `$_POST` data via AJAX, returns json encoded array of results
-*
-* @return array json encoded array of data
-*/
-public function ajax_organise_posts_ordering() {
-
-  error_log("\$_POST: " . json_encode( $_POST ) );
-
-  // check that we have what we need
-  if ( empty( $_POST['id'] ) || ( ! isset( $_POST['previd'] ) && ! isset( $_POST['nextid'] ) ) ) {
-    die(-1);
   }
 
-  // real post?
-  if ( ! $post = get_post( $_POST['id'] ) ) {
-    die(-1);
+  /**
+  * Checks to see if the current user has the capability to "edit others" for a post type
+  *
+  * @param string $post_type Post type name
+  * @return bool True or false
+  */
+  protected function check_edit_others_caps( $post_type ) {
+
+    $post_type_object = get_post_type_object( $post_type );
+    $edit_others_cap = empty( $post_type_object ) ? 'edit_others_' . $post_type . 's' : $post_type_object->cap->edit_others_posts;
+    return apply_filters( 'simple_page_ordering_edit_rights', current_user_can( $edit_others_cap ), $post_type );
+
   }
 
-  // does user have the right to manage these post objects?
-  if ( ! $this->check_edit_others_caps( $post->post_type ) ) {
-    die(-1);
-  }
+  /**
+  * The sorting logic
+  *
+  * Receives `$_POST` data via AJAX, returns json encoded array of results
+  *
+  * @return array json encoded array of data
+  */
+  public function ajax_organise_posts_ordering() {
 
-  // badly written plug-in hooks for save post can break things
-  if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
-    error_reporting( 0 );
-  }
+    error_log("\$_POST: " . json_encode( $_POST ) );
 
-  global $wp_version;
+    // check that we have what we need
+    if ( empty( $_POST['id'] ) || ( ! isset( $_POST['previd'] ) && ! isset( $_POST['nextid'] ) ) ) {
+      die(-1);
+    }
 
-  $previd   = empty( $_POST['previd'] )   ? false               : (int) $_POST['previd'];
-  $nextid   = empty( $_POST['nextid'] )   ? false               : (int) $_POST['nextid'];
-  $start    = empty( $_POST['start'] )    ? 1                   : (int) $_POST['start'];
-  $excluded = empty( $_POST['excluded'] ) ? array( $post->ID )  : array_filter( (array) $_POST['excluded'], 'intval' );
+    // real post?
+    if ( ! $post = get_post( $_POST['id'] ) ) {
+      die(-1);
+    }
 
-  $new_pos = []; // store new positions for ajax
-  $return_data = new \stdClass;
+    // does user have the right to manage these post objects?
+    if ( ! $this->check_edit_others_caps( $post->post_type ) ) {
+      die(-1);
+    }
 
-  do_action( 'simple_page_ordering_pre_order_posts', $post, $start );
+    // badly written plug-in hooks for save post can break things
+    if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+      error_reporting( 0 );
+    }
 
-  // attempt to get the intended parent... if either sibling has a matching parent ID, use that
-  $parent_id = $post->post_parent;
+    global $wp_version;
 
-  $next_post_parent = $nextid ? wp_get_post_parent_id( $nextid ) : false;
+    $previd   = empty( $_POST['previd'] )   ? false               : (int) $_POST['previd'];
+    $nextid   = empty( $_POST['nextid'] )   ? false               : (int) $_POST['nextid'];
+    $start    = empty( $_POST['start'] )    ? 1                   : (int) $_POST['start'];
+    $excluded = empty( $_POST['excluded'] ) ? array( $post->ID )  : array_filter( (array) $_POST['excluded'], 'intval' );
 
-  // if the preceding post is the parent of the next post, move it inside
-  if ( $previd == $next_post_parent ) {
+    $new_pos = []; // store new positions for ajax
+    $return_data = new \stdClass;
 
-    $parent_id = $next_post_parent;
+    do_action( 'simple_page_ordering_pre_order_posts', $post, $start );
 
-  } elseif ( $next_post_parent !== $parent_id ) {
+    // attempt to get the intended parent... if either sibling has a matching parent ID, use that
+    $parent_id = $post->post_parent;
 
-    // otherwise, if the next post's parent isn't the same as our parent, we need to study
-    $prev_post_parent = $previd ? wp_get_post_parent_id( $previd ) : false;
+    $next_post_parent = $nextid ? wp_get_post_parent_id( $nextid ) : false;
 
-    if ( $prev_post_parent !== $parent_id ) { // if the previous post is not our parent now, make it so!
+    // if the preceding post is the parent of the next post, move it inside
+    if ( $previd == $next_post_parent ) {
 
-      $parent_id = ( $prev_post_parent !== false ) ? $prev_post_parent : $next_post_parent;
+      $parent_id = $next_post_parent;
+
+    } elseif ( $next_post_parent !== $parent_id ) {
+
+      // otherwise, if the next post's parent isn't the same as our parent, we need to study
+      $prev_post_parent = $previd ? wp_get_post_parent_id( $previd ) : false;
+
+      if ( $prev_post_parent !== $parent_id ) { // if the previous post is not our parent now, make it so!
+
+        $parent_id = ( $prev_post_parent !== false ) ? $prev_post_parent : $next_post_parent;
+
+      }
 
     }
 
-  }
+    // if the next post's parent isn't our parent, it might as well be false (irrelevant to our query)
+    if ( $next_post_parent !== $parent_id ) {
 
-  // if the next post's parent isn't our parent, it might as well be false (irrelevant to our query)
-  if ( $next_post_parent !== $parent_id ) {
+      $nextid = false;
 
-    $nextid = false;
+    }
 
-  }
+    $max_sortable_posts = (int) apply_filters( 'simple_page_ordering_limit', 50 );  // should reliably be able to do about 50 at a time
+    if ( $max_sortable_posts < 5 ) {  // don't be ridiculous!
 
-  $max_sortable_posts = (int) apply_filters( 'simple_page_ordering_limit', 50 );  // should reliably be able to do about 50 at a time
-  if ( $max_sortable_posts < 5 ) {  // don't be ridiculous!
+      $max_sortable_posts = 50;
 
-    $max_sortable_posts = 50;
+    }
 
-  }
+    // we need to handle all post stati, except trash (in case of custom stati)
+    $post_stati = get_post_stati(array(
+      'show_in_admin_all_list' => true,
+    ));
 
-  // we need to handle all post stati, except trash (in case of custom stati)
-  $post_stati = get_post_stati(array(
-    'show_in_admin_all_list' => true,
-  ));
+    $siblings_query = [
+      'depth'                   => 1,
+      'posts_per_page'          => $max_sortable_posts,
+      'post_type'               => $post->post_type,
+      'post_status'             => $post_stati,
+      'post_parent'             => $parent_id,
+      'orderby'                 => array( 'menu_order' => 'ASC', 'title' => 'ASC' ),
+      'post__not_in'            => $excluded,
+      'update_post_term_cache'  => false,
+      'update_post_meta_cache'  => false,
+      'suppress_filters'        => true,
+      'ignore_sticky_posts'     => true,
+    ];
 
-  $siblings_query = [
-    'depth'                   => 1,
-    'posts_per_page'          => $max_sortable_posts,
-    'post_type'               => $post->post_type,
-    'post_status'             => $post_stati,
-    'post_parent'             => $parent_id,
-    'orderby'                 => array( 'menu_order' => 'ASC', 'title' => 'ASC' ),
-    'post__not_in'            => $excluded,
-    'update_post_term_cache'  => false,
-    'update_post_meta_cache'  => false,
-    'suppress_filters'        => true,
-    'ignore_sticky_posts'     => true,
-  ];
+    if ( version_compare( $wp_version, '4.0', '<' ) ) {
+      $siblings_query['orderby'] = 'menu_order title';
+      $siblings_query['order'] = 'ASC';
+    }
 
-  if ( version_compare( $wp_version, '4.0', '<' ) ) {
-    $siblings_query['orderby'] = 'menu_order title';
-    $siblings_query['order'] = 'ASC';
-  }
+    $siblings = new \WP_Query( $siblings_query ); // fetch all the siblings (relative ordering)
 
-  $siblings = new \WP_Query( $siblings_query ); // fetch all the siblings (relative ordering)
+    // don't waste overhead of revisions on a menu order change (especially since they can't *all* be rolled back at once)
+    remove_action( 'pre_post_update', 'wp_save_post_revision' );
 
-  // don't waste overhead of revisions on a menu order change (especially since they can't *all* be rolled back at once)
-  remove_action( 'pre_post_update', 'wp_save_post_revision' );
-
-  foreach( $siblings->posts as $sibling ) :
+    foreach( $siblings->posts as $sibling ) :
 
     // don't handle the actual post
     if ( $sibling->ID === $post->ID ) {
@@ -319,9 +319,6 @@ public function ajax_organise_posts_ordering() {
 
       case 'menu_order':
 
-      //var_dump($post);
-
-      //echo "x ".$post->menu_order;
       echo $post->menu_order;
       break;
 
@@ -342,6 +339,5 @@ public function ajax_organise_posts_ordering() {
     return $columns;
 
   }
-  //add_filter('manage_edit-project_sortable_columns', __NAMESPACE__ . '\\order_column_register_sortable');
 
 }
