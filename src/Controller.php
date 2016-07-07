@@ -25,12 +25,13 @@ class Controller {
 
   /**
   * Controller constructor.
+  *
+  * @param \Carawebs\OrganisePosts\Config $config Config data object
   */
-  public function __construct() {
+  public function __construct( Config $config) {
 
+    $this->config = $config;
     $this->isAdmin = is_admin();
-
-    //error_log( "From controller: " . json_encode($config['CPTs']) );
 
   }
 
@@ -38,23 +39,19 @@ class Controller {
   * Setup backend hooks.
   * Instantiate necessary objects if necessary.
   *
-  * @param \Carawebs\OrganisePosts\Config                 $config
-  * @param \Carawebs\OrganisePosts\SettingsPage|null      $settings
-  * @param \Carawebs\OrganisePosts\RendererInterface|null $renderer
   * @return void
   */
-  public function setupBackendActions( Config $config ) {
+  public function setupBackendActions() {
 
     if ( ! $this->isAdmin ) { return; }
 
     $this->loadTextDomain();
-
     $this->cptScreen = new CPTScreen();
     $this->termScreen = new TermScreen();
 
-    add_action( 'wp_ajax_organise_posts_cpt_screen', [ $this->cptScreen, 'ajax_organise_posts_ordering' ] ); // hooking to `load-edit.php` is too late
-    add_action( 'wp_ajax_organise_posts_term_screen', [ $this->termScreen, 'ajax_organise_posts_ordering'] ); // hooking to `load-edit.php` is too late
-
+    // NB: hooking wp_ajax actions to `load-edit.php` is too late
+    add_action( 'wp_ajax_organise_posts_cpt_screen', [ $this->cptScreen, 'ajax_organise_posts_ordering' ] );
+    add_action( 'wp_ajax_organise_posts_term_screen', [ $this->termScreen, 'ajax_organise_posts_ordering'] );
     add_action( 'load-edit.php', [ $this, 'load_edit_screen'] );
 
   }
@@ -62,10 +59,9 @@ class Controller {
   /**
    * Setup Frontend hooks
    *
-   * @param  \Carawebs\OrganisePosts\Config $config Config data object
    * @return void
    */
-  public function setupFrontendActions( Config $config ) {
+  public function setupFrontendActions() {
 
     add_filter( 'pre_get_posts', [ new Frontend\DisplayPosts(), 'display_posts' ] );
 
@@ -76,17 +72,22 @@ class Controller {
    */
   public function load_edit_screen() {
 
+    // $wp_list_table = _get_list_table('WP_Posts_List_Table');
+    // var_dump($wp_list_table);
+
     $cptScreen = ! empty( $cptScreen ) ? $cptScreen : $this->cptScreen;
     $termScreen = ! empty( $termScreen ) ? $termScreen : $this->termScreen;
+    //new TaxCPTFilter(array('project' => array('project-category')));
 
     // Determine post type from the screen object
     $screen = get_current_screen();
+    error_log( json_encode( $screen ) );
 
     $current_term = isset( $_GET['project-category'] ) ? $_GET['project-category'] : NULL;
     $post_type = $screen->post_type;
 
     // is post type sortable?
-    $sortable = ( post_type_supports( $post_type, 'page-attributes' ) || is_post_type_hierarchical( $post_type ) );		// check permission
+    $sortable = ( post_type_supports( $post_type, 'page-attributes' ) || is_post_type_hierarchical( $post_type ) );
     if ( ! $sortable = apply_filters( 'simple_page_ordering_is_sortable', $sortable, $post_type ) ) {
       return;
     }
@@ -98,16 +99,25 @@ class Controller {
 
     // Is this an excluded edit screen?
     // The strings in this array are checked against $_GET elements on this screen
+    $taxonomies = get_taxonomies();
     $excluded_screens = [ 'project-category', 'category_name', 'tag' ];
+
     $custom_tax_screen = array_filter( $excluded_screens, function ( $excluded_screen ) {
 
       return isset( $_GET[$excluded_screen] );
 
     });
 
+    error_log( var_export($taxonomies, true) );
+
     if( empty( $custom_tax_screen ) ) {
 
       $screenContext = $cptScreen;
+
+      // @see http://wordpress.stackexchange.com/a/582
+      // @see https://gist.github.com/mikeschinkel/541505
+      //add_action('restrict_manage_posts', [ $cptScreen, 'custom_taxonomy_nav' ] );
+
       $cpt_actions = [
         'manage_project_posts_columns'        => 'add_menu_order_column',
         'manage_project_posts_custom_column'  => 'show_menu_order_column',
@@ -136,6 +146,10 @@ class Controller {
         'manage_project_posts_custom_column'  => 'term_columns',
         'views_' . $screen->id                => 'sort_by_order_link'
       ];
+
+    } else {
+
+      return;
 
     }
 

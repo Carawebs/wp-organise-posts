@@ -40,7 +40,6 @@ define( 'CARAWEBS_ORGANISE_POSTS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CARAWEBS_ORGANISE_POSTS_BASE_URL', plugins_url( NULL, __FILE__ ) );
 define( 'CARAWEBS_ORGANISE_POSTS_SLUG', 'carawebs_organise_posts' );
 
-
 /**
  * Load Composer autoload if available, otherwise register a simple autoload callback.
  *
@@ -104,17 +103,14 @@ add_action( 'wp_loaded', function () {
     // Config
     $config = new Config();
 
-    //error_log( $config['address_line_1'] );
-    //error_log( json_encode($config['CPTs']) );
-
     // Controller class is responsible for instantiating objects and attaching their methods to appropriate hooks.
     $controller = new Controller( $config );
 
     // Setup backend actions
-    $controller->setupBackendActions($config);
+    $controller->setupBackendActions();
 
     // Setup frontend action
-    $controller->setupFrontendActions($config);
+    $controller->setupFrontendActions();
 
 });
 

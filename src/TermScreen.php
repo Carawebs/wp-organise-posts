@@ -101,39 +101,17 @@ class TermScreen extends Screen {
 
     error_log("\$_POST: " . json_encode( $_POST ) );
 
-    // check that we have what we need
-    if ( empty( $_POST['id'] ) || ( ! isset( $_POST['previd'] ) && ! isset( $_POST['nextid'] ) ) ) {
-      die(-1);
-    }
-
-    // real post?
-    if ( ! $post = get_post( $_POST['id'] ) ) {
-      die(-1);
-    }
-
-    // does user have the right to manage these post objects?
-    if ( ! $this->check_edit_others_caps( $post->post_type ) ) {
-      die(-1);
-    }
-
-    // badly written plug-in hooks for save post can break things
-    if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
-      error_reporting( 0 );
-    }
-
-    global $wp_version;
-
-    $term     = empty( $_POST['term'] )     ? false               : sanitize_text_field( $_POST['term'] );
-    $movedID  = empty( $_POST['id'] )       ? false               : (int) $_POST['id'];
-    $previd   = empty( $_POST['previd'] )   ? false               : (int) $_POST['previd'];
-    $nextid   = empty( $_POST['nextid'] )   ? false               : (int) $_POST['nextid'];
-    $start    = empty( $_POST['start'] )    ? 1                   : (int) $_POST['start'];
-    $excluded = empty( $_POST['excluded'] ) ? [ $movedID ]        : array_filter( (array) $_POST['excluded'], 'intval' );
-    $term_postmeta_key = $this->custom_taxonomy . '-' . $term;
+    $post     = $this->check_requirements();  // If OK, returns the post object for the repositioned post
+    $term     = empty( $_POST['term'] )     ? false         : sanitize_text_field( $_POST['term'] );
+    $movedID  = empty( $_POST['id'] )       ? false         : (int) $_POST['id'];
+    $previd   = empty( $_POST['previd'] )   ? false         : (int) $_POST['previd'];
+    $nextid   = empty( $_POST['nextid'] )   ? false         : (int) $_POST['nextid'];
+    $start    = empty( $_POST['start'] )    ? 1             : (int) $_POST['start'];
+    $excluded = empty( $_POST['excluded'] ) ? [ $movedID ]  : array_filter( (array) $_POST['excluded'], 'intval' );
+    $term_postmeta_key  = $this->custom_taxonomy . '-' . $term;
     $new_pos = []; // store new positions for ajax
     $return_data = new \stdClass;
-
-    $siblings = $this->siblings_query( $post, $term, $term_postmeta_key, $excluded );
+    $siblings = $this->siblings_query( $post->post_type, $term, $term_postmeta_key, $excluded );
 
     remove_action( 'pre_post_update', 'wp_save_post_revision' );
 
@@ -142,36 +120,6 @@ class TermScreen extends Screen {
     foreach( $siblings->posts as $sibling_ID ) :
 
       $sibling_meta_order = get_post_meta( $sibling_ID, $term_postmeta_key, true );
-
-      // // The loop is at the next post
-      // if ( $nextid === $sibling_ID ) {
-      //
-      //   update_post_meta( $movedID, $term_postmeta_key, $start );
-      //   $new_pos[$post->ID] = [ 'menu_order'  => $start ];
-      //   $start++;
-      //   update_post_meta( $nextid, $term_postmeta_key, $start );
-      //   $start++;
-      //
-      // }
-      //
-      // // After $next_ID and $start has been set - do nothing
-      // if ( isset( $new_pos[$post->ID] ) && $sibling_meta_order >= $start ) {
-      //
-      //   $return_data->next = false;
-      //   break;
-      //
-      // }
-      //
-      // // Increment the posts after $next_ID
-      // if ( $sibling_meta_order != $start ) {
-      //
-      //   update_post_meta( $sibling_ID, $term_postmeta_key, $start );
-      //
-      // }
-      //
-      // $new_pos[$sibling_ID] = $start;
-      //
-      // $start++;
 
       // Get the order for this post on this term
       $sibling_meta_order = get_post_meta( $sibling_ID, $term_postmeta_key, true );
@@ -259,31 +207,52 @@ class TermScreen extends Screen {
   function term_columns( $name ) {
 
     global $post;
-    //var_dump($post);
-    switch ($name) {
-      case 'xxx':
+
+    switch ( $name ) {
+
+      case 'term_order':
 
         $order = get_post_meta( $post->ID, $this->term_postmeta_key, true );
         echo ! empty( $order ) ? $order : '999';
         break;
-     default:
-        break;
+
+       default:
+          break;
+
      }
 
   }
 
-  function add_new_project_column( $header_text_columns ) {
+  /**
+   * Adds a new column to the edit page
+   *
+   * This is a callback function for the 'manage_project_posts_custom_column'
+   * filter hook.
+   *
+   * @param array $columns Array of edit page column name => label.
+   */
+  function add_new_project_column( $columns ) {
 
-    error_log( json_encode($header_text_columns));
-
-    $header_text_columns['xxx'] = "Order in " . ucfirst($this->current_term) . " " . $this->custom_taxonomy;
-    return $header_text_columns;
+    $columns['term_order'] = "Order in " . ucfirst($this->current_term) . " " . $this->custom_taxonomy;
+    return $columns;
 
   }
 
-  public function siblings_query( $post, $term, $term_postmeta_key, $excluded ) {
-
-    error_log( "\$term_postmeta_key: " . $term_postmeta_key );
+  /**
+   * Build a query for all sibling posts
+   *
+   * Posts of the correct term type, ordered by the correct post meta key, EXCLUDING
+   * the repositioned post. The order that these posts are returned in is very
+   * important - the meta query also needs to fetch posts that have not had the
+   * post meta value set yet.
+   *
+   * @param  string $post_type          The post type to query
+   * @param  string $term               The term for this edit screen
+   * @param  string $term_postmeta_key  The term postmeta key - used for post sorting on this term
+   * @param  array $excluded            Excluded post IDs
+   * @return array                      `WP_Query()`
+   */
+  public function siblings_query( $post_type, $term, $term_postmeta_key, $excluded ) {
 
     $max_sortable_posts = (int) apply_filters( 'simple_page_ordering_limit', 50 );  // should reliably be able to do about 50 at a time
 
@@ -293,15 +262,14 @@ class TermScreen extends Screen {
 
     }
 
-    // we need to handle all post stati, except trash (in case of custom stati)
-    $post_stati = get_post_stati(array(
-      'show_in_admin_all_list' => true,
-    ));
+    // Handle all post stati, except trash (in case of custom stati)
+    $post_stati = get_post_stati([ 'show_in_admin_all_list' => true ] );
 
     $siblings_query = [
       'depth'           => 1,
       'posts_per_page'  => $max_sortable_posts,
-      'post_type'       => $post->post_type,
+      //'post_type'       => $post->post_type,
+      'post_type'       => $post_type,
       'post_status'     => $post_stati,
       'fields'          => 'ids',
       'tax_query' => [
@@ -311,8 +279,6 @@ class TermScreen extends Screen {
           'terms'    => $term,
         ]
       ],
-      // 'meta_key'                => $term_postmeta_key,
-      // 'orderby'                 => ['meta_value' => 'ASC'],//'meta_value',
       'meta_query' => [
           'relation' => 'OR',[
             'key' => $term_postmeta_key,
@@ -325,7 +291,6 @@ class TermScreen extends Screen {
           ],
       ],
       'orderby' => [$term_postmeta_key => 'ASC'],
-      //
       'post__not_in'            => $excluded,
       'update_post_term_cache'  => false,
       'update_post_meta_cache'  => false,
@@ -333,7 +298,7 @@ class TermScreen extends Screen {
       'ignore_sticky_posts'     => true,
     ];
 
-    return new \WP_Query( $siblings_query ); // fetch all the siblings (relative ordering)
+    return new \WP_Query( $siblings_query );
 
   }
 

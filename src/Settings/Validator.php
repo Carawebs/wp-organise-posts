@@ -134,6 +134,14 @@ trait Validator {
 
   }
 
+  /**
+   * Validate the CPT selector
+   *
+   * @uses `array_filter()` with no parameters to strip empty values
+   * @uses `array_slice( $array, 0 )` is used to remove gaps in the array
+   * @param  string $key  The key for this option
+   * @return array        Array of CPT slugs
+   */
   public function validate_cpt_selector( $key ) {
 
     $array = $this->get_option( $key );
@@ -153,7 +161,10 @@ trait Validator {
 
     }
 
-    return $array;
+    // array_filter() with no parameters removes
+    $filtered_zeroes_array = array_slice( array_filter( $array ), 0 );
+
+    return $filtered_zeroes_array;
 
   }
 
