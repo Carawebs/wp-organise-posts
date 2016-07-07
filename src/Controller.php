@@ -1,6 +1,6 @@
 <?php
 /*
-* This file is part of the gm-cookie-policy package.
+* This file is part of the organise-posts package.
 *
 * (c) David Egan <david@carawebs.com>
 *
