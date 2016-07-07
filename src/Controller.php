@@ -107,23 +107,58 @@ class Controller {
 
     if( empty( $custom_tax_screen ) ) {
 
-      add_action( 'wp_ajax_simple_page_ordering', [ $cptScreen, 'ajax_organise_posts_ordering' ] ); // The AJAX callback
-      add_filter( 'views_' . $screen->id,         [ $cptScreen, 'sort_by_order_link' ] );           // Add view by menu order to views
-      add_action( 'wp',                           [ $cptScreen, 'wp' ] );                           //
-      add_action( 'admin_head',                   [ $cptScreen, 'admin_head' ] );
+      $screenContext = $cptScreen;
+      $cpt_actions = [
+        'manage_project_posts_columns'        => 'add_menu_order_column',
+        'manage_project_posts_custom_column'  => 'show_menu_order_column',
+        'wp_ajax_simple_page_ordering'        => 'ajax_organise_posts_ordering',
+        'wp'                                  => 'wp',
+        'admin_head'                          => 'admin_head'
+      ];
+      $cpt_filters = [
+        'manage_edit-project_sortable_columns'=> 'sortable_menu_order_column',
+        'views_' . $screen->id                => 'sort_by_order_link'
+      ];
 
     } else if( in_array( 'project-category', $custom_tax_screen ) ) {
 
+      $screenContext = $termScreen;
       $termScreen->set_term( $current_term );
+      $cpt_actions = [
+        'manage_project_posts_columns'        => 'add_menu_order_column',
+        'manage_project_posts_custom_column'  => 'show_menu_order_column',
+        'manage_project_posts_columns'        => 'add_new_project_column',
+        'pre_get_posts'                       => 'custom_order',
+        'wp'                                  => 'wp',
+        'admin_head'                          => 'admin_head'
+      ];
+      $cpt_filters = [
+        'manage_project_posts_custom_column'  => 'term_columns',
+        'views_' . $screen->id                => 'sort_by_order_link'
+      ];
 
-      add_filter( 'manage_project_posts_custom_column', [ $termScreen, 'term_columns' ]) ;
-      add_action( 'manage_project_posts_columns', [ $termScreen, 'add_new_project_column' ]);
-      add_action( 'pre_get_posts',        [ $termScreen, 'custom_order' ] );
-      add_filter( 'views_' . $screen->id, [ $termScreen, 'sort_by_order_link' ] );  // add view by menu order to views
-      add_action( 'wp',                   [ $termScreen, 'wp' ] );
-      add_action( 'admin_head',           [ $termScreen, 'admin_head' ] );
+    }
 
-      //var_dump( $termScreen );
+    $this->load_actions( $screenContext, $cpt_actions );
+    $this->load_filters( $screenContext, $cpt_filters );
+
+  }
+
+  public function load_actions( Screen $context, array $actions ) {
+
+    foreach( $actions as $action => $method ) {
+
+      add_action( $action, [ $context, $method ] );
+
+    }
+
+  }
+
+  public function load_filters( Screen $context, array $filters ) {
+
+    foreach( $filters as $filter => $method ) {
+
+      add_action( $filter, [ $context, $method ] );
 
     }
 
