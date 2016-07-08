@@ -30,6 +30,8 @@ class Controller {
   */
   public function __construct( Config $config) {
 
+    //var_export($config['CPTs']);
+
     $this->config = $config;
     $this->isAdmin = is_admin();
     $this->target_post_types = $config['CPTs'];//['people', 'project'];
@@ -46,6 +48,7 @@ class Controller {
   public function setupBackendActions() {
 
     if ( ! $this->isAdmin ) { return; }
+    if ( empty( $this->target_post_types ) ) { return; }
 
     $this->loadTextDomain();
     $this->cptScreen = new CPTScreen();
@@ -64,6 +67,8 @@ class Controller {
    * @return void
    */
   public function setupFrontendActions() {
+
+    if ( empty( $this->target_post_types ) ) { return; }
 
     add_filter( 'pre_get_posts', [ new Frontend\DisplayPosts(), 'display_posts' ] );
 
