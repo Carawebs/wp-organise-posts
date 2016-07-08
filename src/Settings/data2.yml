@@ -3,13 +3,13 @@
 default_page_options:
 
   # Name of the menu item and the options table key
-  slug: carawebs_yaml2
+  slug: carawebs_organiser
 
   # Title displayed on the top of the admin panel
-  title: Boilerplate
+  title: Organiser
 
   # Settings page title
-  page_title:  Boilerplate
+  page_title:  Organiser
 
   # slug of parent page   if NULL then this is a top level menu
   # Options:
@@ -30,22 +30,19 @@ default_page_options:
   position:     89
 
   # Description displayed below the title
-  desc:         This is the description
+  desc:         Settings for the post organiser drag-and-drop functionality
 
 # Set up tabs
 # ------------------------------------------------------------------------------
 tabs:
   general:
     slug:  general
-    title:  Main
+    title:  Main Settings
 
   contact:
-    slug:  contact
-    title:  Email Settings
+    slug:  help
+    title:  Help
 
-  more:
-    slug:   more
-    title:  More Settings
 
 # Set up fields
 # ------------------------------------------------------------------------------
@@ -56,30 +53,13 @@ fields:
    type:    cpt_selector
    name:    CPTs
    title:   Select Post Types
-   desc:    The first line
+   desc:    Select the post types for which you'd like to allow sorting
    default: 0
 -
- tab:  general
+ tab:  help
  args:
-   name:  decider
-   title: Decide
-   desc:  Make a decision
-   type:  checkbox
--
-  tab:  general
-  args:
-    name:  radio_test
-    title: Radio Test
-    desc:  radio radio!
-    type:  radio
-    options:
-      one: First Option
-      two: Second Option
-      third: Third Option
--
- tab:  more
- args:
-   name:  more
-   title: More stuff
-   desc:  MOre The second line
-   type:  checkbox
+   name:  help
+   title: Main Help
+   desc:
+   type:  message
+   file:  '/templates/message.php'

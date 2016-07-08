@@ -156,20 +156,20 @@ class RenderFields {
   */
   public function render_cpt_selector( $field ) {
 
-    //error_log( "FIELD: " . json_encode($field) );
-
     extract( $field );
-    ob_start();
-
     $post_types = get_post_types( [
       'show_ui' => true,
       'show_in_menu' => true,
       ],
       'objects' );
+    $disallowed = ['attachment', 'thinking', 'extra-content', 'page', 'post'];
+
+    ob_start();
 
     foreach ( $post_types  as $post_type ) {
 
-      if ( $post_type->name == 'attachment' ) continue;
+      if( in_array( $post_type->name, $disallowed ) ) continue;
+      //if ( $post_type->name == 'attachment' ) continue;
       $checked = NULL;
       if ( isset( $default ) && is_array( $default ) ) {
         $checked = in_array( $post_type->name, $default ) ? "checked='checked'" : NULL;
@@ -179,8 +179,20 @@ class RenderFields {
 
     }
 
+    echo ! empty( $desc ) ? "<p class='description'>$desc</p>" : NULL;
+
     $fieldSpecific = ob_get_clean();
     echo $this->genericField( $fieldSpecific, $name, $title );
+
+  }
+
+  public function render_message( $field ) {
+
+    extract( $field );
+
+    ob_start();
+    include_once( CARAWEBS_ORGANISE_POSTS_PATH . $file );
+    echo ob_get_clean();
 
   }
 

@@ -79,11 +79,11 @@ function settings() {
     new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data2.yml' )
   );
 
-  // Sub Page
-  $settings2 = new Settings\SubMenuPage(
-    new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/fromyaml.php' ),
-    $settings
-  );
+  // // Sub Page
+  // $settings2 = new Settings\SubMenuPage(
+  //   new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/fromyaml.php' ),
+  //   $settings
+  // );
 
 }
 

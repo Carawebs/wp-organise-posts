@@ -4,7 +4,7 @@ namespace Carawebs\OrganisePosts;
 
 class Config implements \ArrayAccess {
 
-    const OPTION = 'carawebs_yaml2';
+    const OPTION = 'carawebs_organiser';
     const CAP    = 'manage_options';
 
     /**
@@ -23,6 +23,7 @@ class Config implements \ArrayAccess {
      * @return \Carawebs\OrganisePosts\Config
      */
     public static function newInstanceFrom( Config $config = null, array $newData = [] ) {
+
         $live = $config ? $config->live->getArrayCopy() : [];
         $stored = $config ? array_merge($config->stored->getArrayCopy(), $newData) : $newData;
         $instance =  new static($live, []);

@@ -214,6 +214,8 @@ class MenuPage extends RenderPage {
 
       foreach ( $tab_fields_data as $field_name => $field_data ) {
 
+        if( 'message' === $field_data['type']) { continue; }
+
         //$this->settings[ $field_name ] = $this->{ 'validate_' . $field_data['type'] }( $field_name );
         $this->settings[ $field_name ] = $this->{ 'validate_' . $field_data['type'] }( $field_name );
 

@@ -83,7 +83,8 @@ class RenderPage extends RenderFields {
       'select',
       'radio',
       'checkbox',
-      'cpt_selector'
+      'cpt_selector',
+      'message'
     ];
 
     // If a type is set that is not allowed, don't add the field
@@ -152,6 +153,8 @@ class RenderPage extends RenderFields {
    * @return void
    */
   protected function save_button() {
+
+    if( isset( $_GET['tab'] ) && 'help' === $_GET['tab'] ) { return; }
 
     ?>
     <button type="submit" name="<?= $this->settings_id; ?>_save" class="button button-primary">

@@ -6,6 +6,8 @@ namespace Carawebs\OrganisePosts;
 */
 abstract class Screen {
 
+  private $post_type;
+
   /**
   * Append a sort by order link to the post actions
   *
@@ -304,7 +306,8 @@ abstract class Screen {
   */
   function add_menu_order_column( $header_text_columns ) {
 
-    $header_text_columns['menu_order'] = "Overall Order in Projects";
+    $msg = 'project' === $this->post_type ? "Overall Order in Projects" : "Display Order";
+    $header_text_columns['menu_order'] = $msg;
     return $header_text_columns;
 
   }
@@ -337,6 +340,12 @@ abstract class Screen {
 
     $columns['menu_order'] = 'menu_order';
     return $columns;
+
+  }
+
+  public function set_post_type( $post_type ) {
+
+    $this->post_type = $post_type;
 
   }
 

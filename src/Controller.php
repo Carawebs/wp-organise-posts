@@ -32,7 +32,8 @@ class Controller {
 
     $this->config = $config;
     $this->isAdmin = is_admin();
-    $this->target_post_types = ['people', 'project'];
+    $this->target_post_types = $config['CPTs'];//['people', 'project'];
+    //var_dump($this);
 
   }
 
@@ -73,29 +74,35 @@ class Controller {
    */
   public function load_edit_screen() {
 
-    // $wp_list_table = _get_list_table('WP_Posts_List_Table');
-    // var_dump($wp_list_table);
-
-    $cptScreen = ! empty( $cptScreen ) ? $cptScreen : $this->cptScreen;
-    $termScreen = ! empty( $termScreen ) ? $termScreen : $this->termScreen;
-    //new TaxCPTFilter(array('project' => array('project-category')));
-
-    // Determine post type from the screen object
     $screen = get_current_screen();
+    $this->post_type = $screen->post_type;
+    //error_log( var_export($this->target_post_types, true) );
 
+    if( ! in_array( $this->post_type, $this->target_post_types ) ) {
+
+      return;
+
+    }
     $current_term = isset( $_GET['project-category'] ) ? $_GET['project-category'] : NULL;
-    $post_type = $screen->post_type;
+
 
     // is post type sortable?
-    $sortable = ( post_type_supports( $post_type, 'page-attributes' ) || is_post_type_hierarchical( $post_type ) );
-    if ( ! $sortable = apply_filters( 'simple_page_ordering_is_sortable', $sortable, $post_type ) ) {
+    $sortable = ( post_type_supports( $this->post_type, 'page-attributes' ) || is_post_type_hierarchical( $this->post_type ) );
+    if ( ! $sortable = apply_filters( 'simple_page_ordering_is_sortable', $sortable, $this->post_type ) ) {
       return;
     }
 
     // does user have the right to manage these post objects?
-    if ( ! $this->check_edit_others_caps( $post_type ) ) {
+    if ( ! $this->check_edit_others_caps( $this->post_type ) ) {
       return;
     }
+
+    $cptScreen = ! empty( $cptScreen ) ? $cptScreen : $this->cptScreen;
+    $termScreen = ! empty( $termScreen ) ? $termScreen : $this->termScreen;
+    $cptScreen->set_post_type( $this->post_type );
+    $termScreen->set_post_type( $this->post_type );
+
+    //new TaxCPTFilter(array('project' => array('project-category')));
 
     // Is this a filtered term edit screen?
     // Screens of this type have the $_GET: `/edit.php?post_type=project&project-category=commercial`
@@ -109,7 +116,9 @@ class Controller {
 
     });
 
-    if( empty( $custom_tax_screen ) ) {
+    // Allowed Post types only, and NOT a custom taxonomy term screen filter
+    // -------------------------------------------------------------------------
+    if( in_array ( $this->post_type, $this->target_post_types ) && empty( $custom_tax_screen ) ) {
 
       $screenContext = $cptScreen;
 
@@ -118,8 +127,9 @@ class Controller {
       //add_action('restrict_manage_posts', [ $cptScreen, 'custom_taxonomy_nav' ] );
 
       $cpt_actions = [
-        'manage_project_posts_columns'        => 'add_menu_order_column',
-        'manage_project_posts_custom_column'  => 'show_menu_order_column',
+        'pre_get_posts'                       => 'orderby_menu_order',
+        'manage_' . $this->post_type . '_posts_columns'        => 'add_menu_order_column',
+        'manage_' . $this->post_type . '_posts_custom_column'  => 'show_menu_order_column',
         'wp_ajax_simple_page_ordering'        => 'ajax_organise_posts_ordering',// @TODO DEPRECATED - CHECK AND REMOVE
         'wp'                                  => 'wp',
         'admin_head'                          => 'admin_head'
@@ -128,9 +138,6 @@ class Controller {
         'manage_edit-project_sortable_columns'=> 'sortable_menu_order_column',
         'views_' . $screen->id                => 'sort_by_order_link'
       ];
-
-      // $this->load_actions( $screenContext, $cpt_actions );
-      // $this->load_filters( $screenContext, $cpt_filters );
 
     } else if( in_array( 'project-category', $custom_tax_screen ) ) {
 

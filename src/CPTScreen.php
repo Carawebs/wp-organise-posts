@@ -12,7 +12,7 @@ class CPTScreen extends Screen {
   */
   public  function wp() {
 
-    $orderby = get_query_var('orderby');
+    $orderby = get_query_var( 'orderby' );
 
     //var_dump($orderby);
 
@@ -39,6 +39,17 @@ class CPTScreen extends Screen {
       'title' => 'Carawebs Ordering',
       'content' => '<p>' . __( 'To reposition an item, simply drag and drop the row by "clicking and holding" it anywhere (outside of the links and form controls) and moving it to its new position.', 'simple-page-ordering' ) . '</p>',
     ]);
+
+  }
+
+  public function orderby_menu_order( $query ) {
+
+    // Check if on frontend and main query is modified
+    if( is_admin() && $query->is_main_query() ) {
+
+      $query->set( 'orderby', [ 'menu_order' => 'ASC', 'date' => 'DESC' ] );
+
+    }
 
   }
 
