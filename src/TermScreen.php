@@ -34,8 +34,6 @@ class TermScreen extends Screen {
 
       wp_enqueue_script( 'organise-posts-term' );
 
-      //wp_enqueue_script( 'organise-posts-term', CARAWEBS_ORGANISE_POSTS_BASE_URL . $script_name, array('jquery-ui-sortable'), '2.1', true );
-
     }
 
   }
@@ -83,6 +81,23 @@ class TermScreen extends Screen {
      ]);
 
     $query->set( 'orderby', [ $key => 'ASC' ] );
+
+  }
+
+  public function amend_title() {
+
+    global $wp_query, $title, $action, $current_screen;
+
+    //var_dump( $wp_query );
+
+    if( 'edit-project' === $current_screen->id ) {
+
+
+    }
+
+
+    // $title = $title . ': New title';
+    // return $title;
 
   }
 

@@ -81,7 +81,6 @@ class Controller {
 
     $screen = get_current_screen();
     $this->post_type = $screen->post_type;
-    //error_log( var_export($this->target_post_types, true) );
 
     if( ! in_array( $this->post_type, $this->target_post_types ) ) {
 
@@ -154,15 +153,19 @@ class Controller {
         'manage_project_posts_columns'        => 'add_new_project_column',
         'pre_get_posts'                       => 'custom_order',
         'wp'                                  => 'wp',
-        'admin_head'                          => 'admin_head'
+        'admin_head'                          => 'admin_head',
+        'admin_head'                          => 'amend_title'
+        //
       ];
       $cpt_filters = [
         'manage_project_posts_custom_column'  => 'term_columns',
-        'views_' . $screen->id                => 'sort_by_order_link'
+        'views_' . $screen->id                => 'sort_by_order_link',
+        //'admin_title'                         => 'amend_title'
       ];
 
       add_action('manage_project_posts_columns', [ $screenContext, 'add_menu_order_column']);
       add_action( 'manage_project_posts_custom_column', [ $screenContext,'show_menu_order_column']);
+      //apply_filters( 'admin_title', [ $screenContext, 'amend_title', 10, 2 ] );
 
     } else {
 
@@ -185,11 +188,12 @@ class Controller {
 
   }
 
-  public function load_filters( Screen $context, array $filters ) {
+  public function load_filters( Screen $context, array $filters, $priority = 10, $accepted_args = 1 ) {
 
     foreach( $filters as $filter => $method ) {
 
       add_action( $filter, [ $context, $method ] );
+      //apply_filters( $filter, [ $context, $method, $priority, $accepted_args ] );
 
     }
 
