@@ -14,8 +14,6 @@ class CPTScreen extends Screen {
 
     $orderby = get_query_var( 'orderby' );
 
-    //var_dump($orderby);
-
     if ( ( is_string( $orderby ) && 0 === strpos( $orderby, 'menu_order' ) ) || ( isset( $orderby['menu_order'] ) && $orderby['menu_order'] == 'ASC' ) ) {
 
       $script_name = '/assets/scripts/simple-page-ordering.dev.js';
