@@ -10,21 +10,18 @@ class TermScreen extends Screen {
 
   private $custom_taxonomy = 'project-category';
 
-  public function __construct () {
-
-
-  }
-
   /**
    * Initialize the sorting scripts
    */
   public  function wp() {
 
-    $orderby = get_query_var('orderby');
-    error_log( "ORDERBY: " . json_encode( $orderby ) );
+    error_log("wp");
 
-    // 'orderby' is a string, and: 'menu_order' is in first position of $orderby (not set), or 'orderby' set to 'menu_order' ASC NOT SURE THIS IS RIGHT!!
-    //if ( ( is_string( $orderby ) && 0 === strpos( $orderby, 'project-category' ) ) || ( isset( $orderby['menu_order'] ) && $orderby['menu_order'] == 'ASC' ) ) {
+    $orderby = get_query_var('orderby');
+
+    // 'orderby' is a string, and: 'menu_order' is in first position of
+    // $orderby (not set), or 'orderby' set to 'menu_order' ASC
+    // NB: NOT SURE THIS IS RIGHT!!
     if ( ( is_array( $orderby ) && 0 === strpos( array_keys( $orderby)[0], 'project-category' ) ) ) {
 
       $script_name = '/assets/scripts/organise-posts-term-screen.js';
@@ -42,6 +39,8 @@ class TermScreen extends Screen {
    * Add page ordering help to the help tab
    */
   public function admin_head() {
+
+    error_log( "admin_head");
 
     $args = [
       'id' => 'simple_page_ordering_help_tab',
@@ -71,6 +70,8 @@ class TermScreen extends Screen {
    */
   public function custom_order ( $query ) {
 
+    error_log( "custom_order");
+
     // Standardised key for post meta
     $key = $this->term_postmeta_key;
 
@@ -85,6 +86,8 @@ class TermScreen extends Screen {
   }
 
   public function amend_title() {
+
+    error_log("amend_title");
 
     global $wp_query, $title, $action, $current_screen;
 
@@ -110,7 +113,7 @@ class TermScreen extends Screen {
    */
   public function ajax_organise_posts_ordering() {
 
-    error_log("\$_POST: " . json_encode( $_POST ) );
+    error_log( "ajax_organise_posts_ordering" );
 
     $post     = $this->check_requirements();  // If OK, returns the post object for the repositioned post
     $term     = empty( $_POST['term'] )     ? false         : sanitize_text_field( $_POST['term'] );
@@ -216,6 +219,8 @@ class TermScreen extends Screen {
    * @return [type]       [description]
    */
   function term_columns( $name ) {
+
+    //error_log("term_columns");
 
     global $post;
 
