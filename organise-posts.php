@@ -50,7 +50,7 @@ function autoload() {
   static $done;
 
   // Go ahead if $done == NULL or the class doesn't exist
-  if ( ! $done && ! class_exists( 'Carawebs\OrganisePosts\Plugin', true ) ) {
+  if ( ! $done && ! class_exists( 'Carawebs\OrganisePosts\Controller', true ) ) {
 
     $done = true;
 
@@ -76,19 +76,12 @@ function settings() {
 
   // Menu Page
   $settings = new Settings\MenuPage(
-    new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data2.yml' )
+    //new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/data2.yml' )
+    new Settings\Config('organise-posts' )
   );
-
-  // // Sub Page
-  // $settings2 = new Settings\SubMenuPage(
-  //   new Settings\Config('organise-posts', new \Symfony\Component\Yaml\Parser(), 'src/Settings/fromyaml.php' ),
-  //   $settings
-  // );
 
 }
 
-// Nothing more to do on AJAX requests
-//( defined( 'DOING_AJAX' ) && DOING_AJAX ) or add_action( 'wp_loaded', function () {
 add_action( 'wp_loaded', function () {
 
     autoload();

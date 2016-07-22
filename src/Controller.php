@@ -14,7 +14,7 @@ use Carawebs\OrganisePosts\DisplayPosts;
 
 /**
 * @author  David Egan <david@carawebs.com>
-* @license http://opensource.org/licenses/MIT MIT
+* @license http://opensource.org/licenses/MIT
 * @package OrganisePosts
 */
 class Controller {
@@ -30,12 +30,10 @@ class Controller {
   */
   public function __construct( Config $config) {
 
-    //var_export($config['CPTs']);
-
     $this->config = $config;
     $this->isAdmin = is_admin();
-    $this->target_post_types = $config['CPTs'];//['people', 'project'];
-    //var_dump($this);
+    $this->target_post_types = $config['CPTs'];
+    $this->set_tax_screen_identifiers( [ 'project-category', 'category_name', 'tag' ] );
 
   }
 
@@ -74,67 +72,45 @@ class Controller {
 
   }
 
+  public function set_tax_screen_identifiers( array $identifiers = [] ) {
+
+    $this->term_screen_identifiers = $identifiers;
+
+  }
+
   /**
-   * Load up page ordering scripts for the edit screen
+   * Load up page ordering scripts for the particular edit screen
+   *
+   * @TODO Add custom tax menu on the CPT screen
+   * @see http://wordpress.stackexchange.com/a/582
+   * @see https://gist.github.com/mikeschinkel/541505
+   * add_action('restrict_manage_posts', [ $cptScreen, 'custom_taxonomy_nav' ] );
    */
   public function load_edit_screen() {
 
     $screen = get_current_screen();
     $this->post_type = $screen->post_type;
 
-    if( ! in_array( $this->post_type, $this->target_post_types ) ) {
+    if( ! in_array( $this->post_type, $this->target_post_types ) or "do-not-proceed" === $this->gatekeeper( $this->post_type ) ) {
 
       return;
 
     }
+
     $current_term = isset( $_GET['project-category'] ) ? $_GET['project-category'] : NULL;
-
-
-    // is post type sortable?
-    $sortable = ( post_type_supports( $this->post_type, 'page-attributes' ) || is_post_type_hierarchical( $this->post_type ) );
-    if ( ! $sortable = apply_filters( 'simple_page_ordering_is_sortable', $sortable, $this->post_type ) ) {
-      return;
-    }
-
-    // does user have the right to manage these post objects?
-    if ( ! $this->check_edit_others_caps( $this->post_type ) ) {
-      return;
-    }
-
-    $cptScreen = ! empty( $cptScreen ) ? $cptScreen : $this->cptScreen;
-    $termScreen = ! empty( $termScreen ) ? $termScreen : $this->termScreen;
-    $cptScreen->set_post_type( $this->post_type );
-    $termScreen->set_post_type( $this->post_type );
-
-    //new TaxCPTFilter(array('project' => array('project-category')));
-
-    // Is this a filtered term edit screen?
-    // Screens of this type have the $_GET: `/edit.php?post_type=project&project-category=commercial`
-    // The strings in this array are checked against $_GET elements on this screen
-    // @TODO $taxonomies = get_taxonomies(); --- get all taxonomies, tidy them up and add them to the array of term filter pages.
-    $term_screens_identifiers = [ 'project-category', 'category_name', 'tag' ];
-
-    $custom_tax_screen = array_filter( $term_screens_identifiers, function ( $term_identifier ) {
-
-      return isset( $_GET[$term_identifier] );
-
-    });
+    $this->cptScreen->set_post_type( $this->post_type );
+    $this->termScreen->set_post_type( $this->post_type );
+    $custom_taxonomy_screen = $this->is_filtered_term_edit_screen();
 
     // Allowed Post types only, and NOT a custom taxonomy term screen filter
-    // -------------------------------------------------------------------------
-    if( in_array ( $this->post_type, $this->target_post_types ) && empty( $custom_tax_screen ) ) {
+    if( in_array ( $this->post_type, $this->target_post_types ) && empty( $custom_taxonomy_screen ) ) {
 
-      $screenContext = $cptScreen;
-
-      // @see http://wordpress.stackexchange.com/a/582
-      // @see https://gist.github.com/mikeschinkel/541505
-      //add_action('restrict_manage_posts', [ $cptScreen, 'custom_taxonomy_nav' ] );
+      $screenContext = $this->cptScreen;
 
       $cpt_actions = [
         'pre_get_posts'                       => 'orderby_menu_order',
         'manage_' . $this->post_type . '_posts_columns'        => 'add_menu_order_column',
         'manage_' . $this->post_type . '_posts_custom_column'  => 'show_menu_order_column',
-        'wp_ajax_simple_page_ordering'        => 'ajax_organise_posts_ordering',// @TODO DEPRECATED - CHECK AND REMOVE
         'wp'                                  => 'wp',
         'admin_head'                          => 'admin_head'
       ];
@@ -143,10 +119,11 @@ class Controller {
         'views_' . $screen->id                => 'sort_by_order_link'
       ];
 
-    } else if( in_array( 'project-category', $custom_tax_screen ) ) {
+    } else if( in_array( 'project-category', $custom_taxonomy_screen ) ) {
 
-      $screenContext = $termScreen;
-      $termScreen->set_term( $current_term );
+      $screenContext = $this->termScreen;
+      $this->termScreen->set_term( $current_term );
+
       $cpt_actions = [
         'manage_project_posts_columns'        => 'add_menu_order_column',
         'manage_project_posts_custom_column'  => 'show_menu_order_column',
@@ -154,8 +131,7 @@ class Controller {
         'pre_get_posts'                       => 'custom_order',
         'wp'                                  => 'wp',
         'admin_head'                          => 'admin_head',
-        'admin_head'                          => 'amend_title'
-        //
+        //'admin_head'                          => 'amend_title'
       ];
       $cpt_filters = [
         'manage_project_posts_custom_column'  => 'term_columns',
@@ -175,6 +151,51 @@ class Controller {
 
     $this->load_actions( $screenContext, $cpt_actions );
     $this->load_filters( $screenContext, $cpt_filters );
+
+  }
+
+  public function gatekeeper( $post_type ) {
+
+    if( ! in_array( $post_type, $this->target_post_types ) ) {
+
+      return "do-not-proceed";
+
+    }
+
+    // is post type sortable?
+    $sortable = ( post_type_supports( $post_type, 'page-attributes' ) || is_post_type_hierarchical( $post_type ) );
+
+    if ( ! $sortable = apply_filters( 'simple_page_ordering_is_sortable', $sortable, $post_type ) ) {
+
+      return "do-not-proceed";
+
+    }
+
+    // does user have the right to manage these post objects?
+    if ( ! $this->check_edit_others_caps( $this->post_type ) ) {
+
+      return "do-not-proceed";
+
+    }
+
+  }
+
+  /**
+   * Is this a filtered term edit screen?
+   *
+   * Screens of this type have the $_GET: `/edit.php?post_type=project&project-category=commercial`
+   * The strings in this array are checked against $_GET elements on this screen
+   * @TODO $taxonomies = get_taxonomies(); --- get all taxonomies, tidy them up and add them to the array of term filter pages.
+   * @param  [type]  $term [description]
+   * @return boolean       true if the current screen $_GET array contains one of the term identifiers
+   */
+  public function is_filtered_term_edit_screen () {
+
+    return array_filter( $this->term_screen_identifiers, function ( $term_identifier ) {
+
+      return isset( $_GET[$term_identifier] );
+
+    });
 
   }
 
