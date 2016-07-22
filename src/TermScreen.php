@@ -70,8 +70,6 @@ class TermScreen extends Screen {
    */
   public function custom_order ( $query ) {
 
-    error_log( "custom_order");
-
     // Standardised key for post meta
     $key = $this->term_postmeta_key;
 
@@ -86,8 +84,6 @@ class TermScreen extends Screen {
   }
 
   public function amend_title() {
-
-    error_log("amend_title");
 
     global $wp_query, $title, $action, $current_screen;
 
@@ -112,8 +108,6 @@ class TermScreen extends Screen {
    * @return array json encoded array of data
    */
   public function ajax_organise_posts_ordering() {
-
-    error_log( "ajax_organise_posts_ordering" );
 
     $post     = $this->check_requirements();  // If OK, returns the post object for the repositioned post
     $term     = empty( $_POST['term'] )     ? false         : sanitize_text_field( $_POST['term'] );
@@ -219,8 +213,6 @@ class TermScreen extends Screen {
    * @return [type]       [description]
    */
   function term_columns( $name ) {
-
-    //error_log("term_columns");
 
     global $post;
 
