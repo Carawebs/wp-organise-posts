@@ -6,10 +6,10 @@ namespace Carawebs\OrganisePosts\Settings;
  */
 class Config {
 
-  public function __construct( $plugin_slug, $yamlParser, $datafile = NULL ) {
+  public function __construct( $plugin_slug, $yamlParser = NULL, $datafile = NULL ) {
 
     $this->yamlParser   = $yamlParser;
-    $this->datafile     = ! empty( $datafile ) ? CARAWEBS_ORGANISE_POSTS_PATH . $datafile : CARAWEBS_ORGANISE_POSTS_PATH . 'src/Settings/data.php';
+    $this->datafile     = ! empty( $datafile ) ? CARAWEBS_ORGANISE_POSTS_PATH . $datafile : CARAWEBS_ORGANISE_POSTS_PATH . 'src/Settings/settings-data.php';
     $this->plugin_slug  = $plugin_slug;
     $this->setConfig();
     $this->settings_id  = $this->config['default_page_options']['slug'];
@@ -27,7 +27,7 @@ class Config {
 
       // $openingString = "<?php\n return\n";
       // $closingString = ";";
-      // $fp = fopen( CW_ORGANISE_POSTS_PLUGIN_PATH . 'src/Settings/fromyaml.php', 'w' );
+      // $fp = fopen( CARAWEBS_ORGANISE_POSTS_PATH . 'src/Settings/settings.php', 'w' );
       // fwrite( $fp, $openingString . var_export($this->config, TRUE ) . $closingString );
       // fclose( $fp );
 
