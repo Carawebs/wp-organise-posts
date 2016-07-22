@@ -13,7 +13,7 @@
  * @package           OrganisePosts
  *
  * @wordpress-plugin
- * Plugin Name:       Organise Posts
+ * Plugin Name:       Carawebs Organise Posts
  * Plugin URI:        http://carawebs.com
  * Description:       Organise posts and custom posts by dragging and dropping into the required order.
  * Version:           1.0.0
