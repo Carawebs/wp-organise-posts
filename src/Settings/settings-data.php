@@ -22,7 +22,7 @@ $settings = array (
       'contact' =>
         array (
           'slug' => 'help',
-          'title' => 'HelpAA',
+          'title' => 'Help',
         ),
     ),
   'fields' =>
