@@ -1,7 +1,7 @@
 Organise Posts by Drag and Drop
 ===============================
 
-Custom Post Types are ordered by an index that is set when you drag and drop them in place.
+Set the display order of Custom Post Types by drag and drop on the posts edit screen. Ordering is achieved by an index that is set when you drag and drop them in place.
 
 ## Build Notes
 A post meta value is used to order projects on project-category taxonomy archive pages.

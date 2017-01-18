@@ -24,7 +24,6 @@ class Convert extends \WP_CLI_Command {
 
     \WP_CLI::log( json_encode( $args ) );
     \WP_CLI::log( "The source file is $source and the destination file is $destination" );
-    // \WP_CLI::log( $second );
 
     \WP_CLI::success( 'Hello everybody! xxx' );
 
