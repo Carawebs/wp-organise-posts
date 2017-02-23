@@ -82,12 +82,6 @@ add_action( 'wp_loaded', function () {
     autoload();
     settings();
 
-    // Kick off WP CLI if using
-    if( defined( 'WP_CLI' ) && WP_CLI ) {
-      require_once( dirname( __FILE__ ) . '/WPCLI/Convert.php' );
-      return;
-    }
-
     // Config
     $config = new Config();
 
