@@ -1,6 +1,5 @@
 Organise Posts by Drag and Drop
 ===============================
-
 Set the display order of Custom Post Types by drag and drop on the posts edit screen. Ordering is achieved by an index that is set when you drag and drop them in place.
 
 ## Build Notes
