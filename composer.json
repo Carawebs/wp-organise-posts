@@ -1,6 +1,6 @@
 {
-    "name": "carawebs/organise-posts",
-    "description": "Set the display order of Custom Post Types by drag and drop on the posts edit screen. Ordering is achieved by an index that is set when you drag and drop them in place.",
+    "name": "carawebs/wp-organise-posts",
+    "description": "Set the display order of WordPress Custom Post Types by drag and drop on the posts edit screen. Ordering is achieved by an index that is set when you drag and drop them in place.",
     "type": "wordpress-plugin",
     "keywords": ["wordpress", "plugin"],
     "homepage": "http://example.com/",
