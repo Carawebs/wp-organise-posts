@@ -19,10 +19,8 @@ class DisplayPosts {
     {
         // Get the term that is being displayed for the given custom taxonomy
         $this_term = $query->query['project-category'];
-
         // Standardised key for post meta
         $key = "project-category-$this_term";
-
         // Set the meta_key and orderby it's value
         $query->set('meta_key', $key);
         $query->set('orderby', ['meta_value' => 'ASC', 'date' => 'DESC']);
@@ -34,9 +32,7 @@ class DisplayPosts {
         // Check if on frontend and main query is modified
         if(!is_admin() && $query->is_main_query()) {
             // Get the term that is being displayed for the given custom taxonomy
-            $this_term = ! empty( $query->query['project-category']) ? $query->query['project-category'] : NULL;
-
-            // if( empty( $this_term ) ) { return; }
+            $this_term = !empty( $query->query['project-category']) ? $query->query['project-category'] : NULL;
             if( empty( $this_term ) ) {
                 $query->set( 'orderby', [ 'menu_order' => 'ASC' ] );
             } else {
