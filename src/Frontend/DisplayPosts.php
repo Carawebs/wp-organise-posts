@@ -2,25 +2,21 @@
 namespace Carawebs\OrganisePosts\Frontend;
 
 /**
- * Functionality for displaying posts on the Frontend of the site
- */
+* Functionality for displaying posts on the Frontend of the site
+*/
 class DisplayPosts {
-
-  function __construct() {
-
-    }
 
     /**
     * Set a custom order for posts
     *
-    * This is a callback for the `pre_get_posts` filter hook
+    * Callback for the `pre_get_posts` filter hook
     *
     * @see https://codex.wordpress.org/Plugin_API/Action_Reference/pre_get_posts
     * @param  object $query The $query object - passed by reference.
     * @return void
     */
-    public function custom_order ( $query ) {
-
+    public function custom_order ( $query )
+    {
         // Get the term that is being displayed for the given custom taxonomy
         $this_term = $query->query['project-category'];
 
@@ -32,7 +28,6 @@ class DisplayPosts {
         $query->set('orderby', ['meta_value' => 'ASC', 'date' => 'DESC']);
 
     }
-
 
     public function display_posts( $query )
     {
@@ -55,19 +50,6 @@ class DisplayPosts {
                 ) );
                 $query->set( 'orderby', [ $key => 'ASC', 'menu_order' => 'ASC' ] );
             }
-
-            // // Standardised key for post meta index
-            // $key = "project-category-$this_term";
-            //
-            // $query->set( 'meta_query', array(
-            //     'relation' => 'OR',
-            //     array( 'key' => $key, 'compare' => 'EXISTS', 'type' => 'NUMERIC' ),
-            //     array( 'key' => $key, 'compare' => 'NOT EXISTS' )
-            // ) );
-            // $query->set( 'orderby', [ $key => 'ASC', 'menu_order' => 'ASC' ] );
-
         }
-
     }
-
 }
