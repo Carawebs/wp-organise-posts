@@ -56,6 +56,7 @@ class Controller {
     public function setupFrontendActions()
     {
         if (empty($this->target_post_types)) { return; }
+        if (!in_array(get_queried_object(), $this->target_post_types)) { return; }
         add_filter( 'pre_get_posts', [ new Frontend\DisplayPosts(), 'display_posts' ] );
     }
 
